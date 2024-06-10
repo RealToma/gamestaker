@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+html {
+  /* background-color: #121212; */
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Inter",
+    "Garet", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: black;
+  /* background: #000; */
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #7a7a7a;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #202020;
+  cursor: pointer !important;
+  border-radius: 2px;
+}
+
+.notification-container {
+  width: fit-content !important;
+  font-family: Garet;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+
+  @media (max-width: 430px) {
+    font-size: 14px;
+    font-weight: 400;
+  }
+}
+
+.notification {
+  padding: 15px 30px 15px 58px !important;
+  color: #0d0d0d !important;
+  border-radius: 6px !important;
+  opacity: 1 !important;
+}
+.notification-info {
+  background-color: #c1ff72 !important;
+}
