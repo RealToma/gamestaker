@@ -1,20 +1,24 @@
 import { Box } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { useAccount, useDisconnect } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useOutsideDetector } from "../../hooks/useOutsideDetector";
 
 const Header = () => {
   const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
   const [disconnectOpen, setDisconnectOpen] = useState(false);
-  const [open, setOpen] = useState(false);
   const { openConnectModal } = useConnectModal();
+
+  const refConnectDown = useRef(0);
+  useOutsideDetector([refConnectDown], () => setDisconnectOpen(false));
 
   const connectWallet = () => {
     if (isConnected) {
-      setDisconnectOpen((prev) => !prev);
+      setDisconnectOpen(true);
     } else {
+      setDisconnectOpen(false);
       if (openConnectModal) {
         openConnectModal();
       }
@@ -24,25 +28,36 @@ const Header = () => {
   const handleDisconnect = () => {
     setDisconnectOpen(false);
     disconnect();
-    setOpen(false);
   };
 
   return (
     <StyledComponent>
       <ButtonHowItWorks>HOW IT WORKS</ButtonHowItWorks>
-      <ButtonConnect>
-
-      </ButtonConnect>
+      <SectionButtonGroup>
+        {isConnected ? <ButtonMyBets>My Bets</ButtonMyBets> : <></>}
+        <ButtonConnect onClick={connectWallet}>
+          {isConnected
+            ? `${address?.slice(0, 6)}...${address?.slice(address.length - 4)}`
+            : "Connect wallet"}
+          {disconnectOpen && isConnected ? (
+            <ButtonDisconnect onClick={handleDisconnect} ref={refConnectDown}>
+              Disconnect
+            </ButtonDisconnect>
+          ) : (
+            <></>
+          )}
+        </ButtonConnect>
+      </SectionButtonGroup>
     </StyledComponent>
   );
 };
 
 const StyledComponent = styled(Box)`
   display: flex;
-  position: relative;
   width: 100%;
   height: 350px;
-  padding: 100px 100px;
+  justify-content: space-between;
+  padding: 100px 80px;
   box-sizing: border-box;
   background-image: url("/assets/images/background/header.png");
   background-size: 100% 100%;
@@ -50,16 +65,23 @@ const StyledComponent = styled(Box)`
   background-position: center;
 `;
 
+const SectionButtonGroup = styled(Box)`
+  display: flex;
+  /* align-items: center; */
+`;
+
 const ButtonHowItWorks = styled(Box)`
   display: flex;
-  width: 300px;
+  width: 250px;
   height: 50px;
   justify-content: center;
   align-items: center;
   background-color: #c40632;
   color: white;
+  font-family: "Inter";
   font-weight: 600;
-
+  font-size: 20px;
+  text-transform: uppercase;
   border-radius: 20px;
   cursor: pointer;
   user-select: none;
@@ -73,14 +95,17 @@ const ButtonHowItWorks = styled(Box)`
 
 const ButtonConnect = styled(Box)`
   display: flex;
-  width: 300px;
+  position: relative;
+  width: 250px;
   height: 50px;
   justify-content: center;
   align-items: center;
-  background-color: #c40632;
+  background-color: #ffae00;
   color: white;
+  font-family: "Inter";
   font-weight: 600;
-
+  font-size: 20px;
+  text-transform: uppercase;
   border-radius: 20px;
   cursor: pointer;
   user-select: none;
@@ -88,9 +113,61 @@ const ButtonConnect = styled(Box)`
   transition: 0.5s;
   &:hover {
     background-color: white;
-    color: #c40632;
+    color: #FFCA00;
   }
 `;
 
+const ButtonDisconnect = styled(Box)`
+  display: flex;
+  position: absolute;
+  width: 250px;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  background-color: #1e202a;
+  color: white;
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 20px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+
+  left: 50%;
+  transform: translateX(-50%);
+  top: 60px;
+
+  transition: 0.5s;
+  &:hover {
+    background-color: white;
+    color: #1e202a;
+  }
+`;
+
+const ButtonMyBets = styled(Box)`
+  display: flex;
+  width: 200px;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  background-color: #48B415;
+  color: white;
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 20px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+
+  margin-right: 20px;
+
+  transition: 0.5s;
+  &:hover {
+    background-color: white;
+    color: #48B415;
+  }
+`;
 
 export default Header;

@@ -17,8 +17,8 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     // avalanche,
     // avalancheFuji,
     ...(process.env.REACT_APP_ENABLE_TESTNET === "true"
-      ? [bronosTestnet, polygonMumbai]
-      : [bsc, polygon]),
+      ? [bronosTestnet]
+      : [bsc]),
   ],
   [publicProvider()]
 );
