@@ -40,8 +40,11 @@ const SectionBetGroup = ({
                       <SectionEachOption>
                         <TextOption>{each.optionName}</TextOption>
                         <TextRatio>{each.ratio}</TextRatio>
-                        <SectionInput>{each.optionName}</SectionInput>
-                        <ButtonBet>{each.optionName}</ButtonBet>
+                        <SectionInput>
+                          <InputBetValue component='input'>
+                          </InputBetValue>
+                        </SectionInput>
+                        <ButtonBet>Bet</ButtonBet>
                       </SectionEachOption>
                     );
                   })}
@@ -134,16 +137,52 @@ const TextRatio = styled(Box)`
 
 const SectionInput = styled(Box)`
   display: flex;
-  flex: 2;
-  width: 100%;
-  margin-left: 50px;
-`;
-
-const ButtonBet = styled(Box)`
-  display: flex;
   flex: 1;
   width: 100%;
   margin-left: 50px;
+  background-color: white;
+  border-radius: 20px;
+  height: 50px;
+  padding: 0px 20px;
+  box-sizing: border-box;
+`;
+
+const InputBetValue = styled(Box)`
+  display: flex;
+  width: 100%;
+  border: none;
+  outline: none;
+
+  color: black;
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 20px;
+`
+
+const ButtonBet = styled(Box)`
+  display: flex;
+  flex: 0.5;
+  width: 100%;
+  margin-left: 50px;
+
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  background-color: #48b415;
+  color: white;
+  font-family: "Inter";
+  font-weight: 600;
+  font-size: 20px;
+  text-transform: uppercase;
+  border-radius: 20px;
+  cursor: pointer;
+  user-select: none;
+
+  transition: 0.5s;
+  &:hover {
+    background-color: white;
+    color: #48b415;
+  }
 `;
 
 export default SectionBetGroup;

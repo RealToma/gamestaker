@@ -3,15 +3,15 @@ export const dataBetGroupList = [
     groupName: "General Bets",
     groupBet: [
       {
-        groupBetName: "Bet1",
+        groupBetName: "Winner",
         groupBetList: [
           {
             optionName: "Germany VS Scotland",
             ratio: "1.2 : 3.5",
           },
           {
-            optionName: "England VS Crotia",
-            ratio: "1.6 : 2.1",
+            optionName: "Spain VS Italy",
+            ratio: "1.6 : 1.8",
           },
         ],
       },
@@ -19,7 +19,7 @@ export const dataBetGroupList = [
         groupBetName: "Bet2",
         groupBetList: [
           {
-            optionName: "Spain VS Italy",
+            optionName: "Poland VS Nether",
             ratio: "1.5 : 1.5",
           },
           {
