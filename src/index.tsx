@@ -8,7 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
-import { avalanche, avalancheFuji } from "wagmi/chains";
+import { bsc, bronosTestnet, polygon, polygonMumbai } from "wagmi/chains";
 
 import App from "./App";
 
@@ -17,15 +17,16 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     // avalanche,
     // avalancheFuji,
     ...(process.env.REACT_APP_ENABLE_TESTNET === "true"
-      ? [avalancheFuji]
-      : [avalanche]),
+      ? [bronosTestnet, polygonMumbai]
+      : [bsc, polygon]),
   ],
   [publicProvider()]
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "FishMiner",
-  projectId: process.env.REACT_APP_PROJECT_ID as any,
+  appName: "GameStaker",
+  // projectId: process.env.REACT_APP_PROJECT_ID as any,
+  projectId: "c9bfdfeba6902d82c74c3c748bcd073e",
   chains,
 });
 

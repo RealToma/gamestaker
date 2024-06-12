@@ -5,6 +5,7 @@ import "react-notifications/lib/notifications.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import { useEffect, useState } from "react";
+import Layout from "./pages/layout";
 
 const App = () => {
   // const [isEntered, setIsEntered] = useState(false);
@@ -31,9 +32,11 @@ const App = () => {
   return (
     <StyledComponent>
       <BrowserRouter>
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+          </Routes>
+        </Layout>
       </BrowserRouter>
       <NotificationContainer />
     </StyledComponent>
@@ -44,7 +47,7 @@ const StyledComponent = styled(Box)`
   display: flex;
   width: 100%;
   height: 100%;
-  /* background-color: #121212; */
+  background-color: #133BDA;
 `;
 
 export default App;
