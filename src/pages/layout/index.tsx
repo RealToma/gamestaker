@@ -17,24 +17,26 @@ const StyledComponent = styled(Box)`
   display: flex;
   width: 100%;
   flex-direction: column;
-
   animation: animateBack 500ms linear;
   @keyframes animateBack {
-        0% {
-          opacity: 0;
-        }
-        80% {
-          opacity: 0.6;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
+    0% {
+      opacity: 0;
+    }
+    80% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 `;
 
 const Content = styled(Box)`
   display: flex;
   width: 100%;
+
+  padding: 50px 80px;
+  box-sizing: border-box;
 `;
 
 export default Layout;

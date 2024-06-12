@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import { useEffect, useState } from "react";
 import Layout from "./pages/layout";
+import MyBets from "./pages/mybets";
 
 const App = () => {
   // const [isEntered, setIsEntered] = useState(false);
@@ -35,6 +36,7 @@ const App = () => {
         <Layout>
           <Routes>
             <Route exact path="/" element={<Home />} />
+            <Route path="/mybets" element={<MyBets />} />
           </Routes>
         </Layout>
       </BrowserRouter>
@@ -47,7 +49,7 @@ const StyledComponent = styled(Box)`
   display: flex;
   width: 100%;
   height: 100%;
-  background-color: #133BDA;
+  background-color: #133bda;
 `;
 
 export default App;
