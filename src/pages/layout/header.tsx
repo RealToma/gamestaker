@@ -30,9 +30,16 @@ const Header = () => {
     disconnect();
   };
 
+  const handleOpenWorks = () => {
+    // window.open("/FLAPPYBEE.pdf");
+    window.open("https://github.com/RealToma/gamestaker/blob/main/README.md");
+  };
+
   return (
     <StyledComponent>
-      <ButtonHowItWorks>HOW IT WORKS</ButtonHowItWorks>
+      <ButtonHowItWorks onClick={() => handleOpenWorks()}>
+        HOW IT WORKS
+      </ButtonHowItWorks>
       <SectionButtonGroup>
         {isConnected ? <ButtonMyBets>My Bets</ButtonMyBets> : <></>}
         <ButtonConnect onClick={connectWallet}>
@@ -113,7 +120,7 @@ const ButtonConnect = styled(Box)`
   transition: 0.5s;
   &:hover {
     background-color: white;
-    color: #FFCA00;
+    color: #ffca00;
   }
 `;
 
@@ -151,7 +158,7 @@ const ButtonMyBets = styled(Box)`
   height: 50px;
   justify-content: center;
   align-items: center;
-  background-color: #48B415;
+  background-color: #48b415;
   color: white;
   font-family: "Inter";
   font-weight: 600;
@@ -166,7 +173,7 @@ const ButtonMyBets = styled(Box)`
   transition: 0.5s;
   &:hover {
     background-color: white;
-    color: #48B415;
+    color: #48b415;
   }
 `;
 
