@@ -17,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     someRequest().then(() => {
-      const loaderElement = document.querySelector(".content_ring");
+      const loaderElement = document.querySelector(".main-fader");
       if (loaderElement) {
         loaderElement.remove();
         setLoading(!isLoading);
