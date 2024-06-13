@@ -68,8 +68,8 @@ const Backdrop = styled(Box)<any>`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: ${({ open }: any) => (!open ? "transparent" : "rgba(0,0,0,.6)")};
-  z-index: 9;
+  background: ${({ open }: any) => (!open ? "transparent" : "rgba(0,0,0,.7)")};
+  z-index: 54;
   transition: 0.3s;
   transform-origin: center;
   transform: ${({ open }: any) => (!open ? "scale(0)" : "scale(1)")};
@@ -83,7 +83,15 @@ const StyledComponent = styled(Box)`
   font-family: "Inter";
   font-weight: 600;
   font-size: 20px;
-  z-index: 10;
+  z-index: 55;
+
+  @media (max-width: 1440px) {
+    font-size: 18px;
+  }
+  @media (max-width: 768px) {
+    font-size: 16px;
+    font-weight: 500;
+  }
 `;
 
 const SectionContent = styled(Box)`
@@ -113,14 +121,37 @@ const ButtonGroupBet = styled(Box)`
     background-color: white;
     color: #c40632;
   }
+
+  @media (max-width: 1440px) {
+    width: 200px;
+    height: 45px;
+    font-size: 18px;
+  }
+  @media (max-width: 768px) {
+    width: 200px;
+    height: 35px;
+    font-size: 16px;
+    padding: 0px 18px;
+  }
+  @media (max-width: 500px) {
+    width: 180px;
+    height: 35px;
+    font-size: 15px;
+    padding: 0px 16px;
+  }
 `;
 
 const SectionEachBet = styled(Box)`
   display: flex;
   width: 100%;
-  padding: 30px;
-  box-sizing: border-box;
+  margin-top: 20px;
+  margin-bottom: 30px;
   flex-direction: column;
+
+  @media (max-width: 1280px) {
+    margin-top: 0px;
+    margin-bottom: 30px;
+  }
 `;
 
 const TextBetGroupName = styled(Box)`
@@ -139,23 +170,48 @@ const SectionEachOption = styled(Box)`
   width: 100%;
   margin-top: 15px;
   align-items: center;
+  @media (max-width: 768px) {
+    margin-top: 10px;
+  }
 `;
 
 const TextOption = styled(Box)`
   display: flex;
   flex: 1;
-  margin-left: 150px;
+  margin-left: 100px;
+  @media (max-width: 1440px) {
+    margin-left: 70px;
+    flex: 0.8;
+  }
+  @media (max-width: 900px) {
+    margin-left: 30px;
+    flex: 0.6;
+  }
+  @media (max-width: 768px) {
+    margin-left: 20px;
+  }
 `;
 
 const TextRatio = styled(Box)`
   display: flex;
   flex: 1;
   margin-left: 50px;
+  @media (max-width: 1440px) {
+    margin-left: 30px;
+    flex: 0.8;
+  }
+  @media (max-width: 900px) {
+    margin-left: 20px;
+    flex: 0.6;
+  }
+  @media (max-width: 768px) {
+    margin-left: 20px;
+  }
 `;
 
 const SectionInput = styled(Box)`
   display: flex;
-  flex: 1;
+  flex: 1.5;
   width: 100%;
   margin-left: 50px;
   background-color: #272727;
@@ -167,6 +223,17 @@ const SectionInput = styled(Box)`
   transition: 0.3s;
   &:hover {
     box-shadow: 0px 0px 10px white;
+  }
+  @media (max-width: 1280px) {
+    height: 35px;
+  }
+  @media (max-width: 768px) {
+    padding: 0px 15px;
+    margin-left: 20px;
+    flex: 1;
+    &:hover {
+      box-shadow: 0px 0px 6px white;
+    }
   }
 `;
 
@@ -180,16 +247,24 @@ const InputBetValue = styled(Box)`
   font-family: "Inter";
   font-weight: 500;
   font-size: 20px;
+
+  @media (max-width: 1440px) {
+    font-size: 18px;
+  }
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 
 const ButtonBet = styled(Box)`
   display: flex;
+  justify-content: center;
   padding: 0 40px;
+  box-sizing: border-box;
   /* width: 100%; */
   margin-left: 50px;
 
   height: 40px;
-  justify-content: center;
   align-items: center;
   background-color: #48b415;
   color: white;
@@ -205,6 +280,19 @@ const ButtonBet = styled(Box)`
   &:hover {
     background-color: white;
     color: #48b415;
+  }
+
+  @media (max-width: 1440px) {
+    padding: 0 30px;
+  }
+  @media (max-width: 1280px) {
+    padding: 0 25px;
+    font-weight: 500;
+    font-size: 15px;
+    height: 35px;
+  }
+  @media (max-width: 768px) {
+    margin-left: 20px;
   }
 `;
 

@@ -53,14 +53,13 @@ const BackVideo = styled(Box)`
   transform: translate(-50%, -50%); */
   filter: blur(2px);
   > video {
-
     width: 100vw;
     height: 100vh;
     object-position: center;
     object-fit: cover;
   }
 
-  z-index: 9;
+  z-index: 10;
 `;
 
 const InsideContent = styled(Box)`
@@ -69,7 +68,19 @@ const InsideContent = styled(Box)`
 
   padding: 50px 80px;
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 30;
+  @media (max-width: 1440px) {
+    padding: 50px 60px;
+  }
+  @media (max-width: 1280px) {
+    padding: 50px 40px;
+  }
+  @media (max-width: 768px) {
+    padding: 50px 30px;
+  }
+  @media (max-width: 500px) {
+    padding: 50px 20px;
+  }
 `;
 
 export default Layout;

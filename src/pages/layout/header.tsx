@@ -96,7 +96,7 @@ const StyledComponent = styled(Box)`
   @media (max-width: 390px) {
     height: 270px;
   }
-  z-index: 100;
+  z-index: 20;
 `;
 
 const SectionButtonGroup = styled(Box)`
@@ -104,7 +104,7 @@ const SectionButtonGroup = styled(Box)`
   /* align-items: center; */
   @media (max-width: 768px) {
     margin-top: 10px;
-    padding-bottom: 10px;
+    padding-bottom:-100px;
   }
   @media (max-width: 500px) {
     margin-top: 10px;
@@ -288,7 +288,7 @@ const SectionLogo = styled(Box)`
   transform: translateX(-50%);
   top: 30px;
   width: 160px;
-  z-index: 100;
+  z-index: 21;
 `;
 
 export default Header;
