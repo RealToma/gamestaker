@@ -10,7 +10,7 @@ body {
     "Garet", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #133BDA;
+  background-color: rgb(28, 133, 42);
   /* background: #000; */
 }
 
