@@ -61,13 +61,13 @@ const SectionBetGroup = ({
                               <SectionInput>
                                 <InputBetValue
                                   component="input"
-                                  placeholder="Input local : visitant"
+                                  placeholder="local : visitant"
                                 ></InputBetValue>
                               </SectionInput>
                               <SectionInput ml="10px">
                                 <InputBetValue
                                   component="input"
-                                  placeholder="Input token amount"
+                                  placeholder="Token amount"
                                 ></InputBetValue>
                               </SectionInput>
                             </SectionGroupInput>
@@ -281,6 +281,9 @@ const SectionGroupInput = styled(Box)`
   @media (max-width: 768px) {
     margin-left: 20px;
     flex: 0.8;
+  }
+  @media (max-width: 600px) {
+    margin-left: 0px;
   }
 `;
 
