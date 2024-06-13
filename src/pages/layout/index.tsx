@@ -66,7 +66,7 @@ const InsideContent = styled(Box)`
   display: flex;
   width: 100%;
 
-  padding: 50px 80px;
+  padding: 50px 100px;
   box-sizing: border-box;
   z-index: 30;
   @media (max-width: 1440px) {
@@ -76,6 +76,7 @@ const InsideContent = styled(Box)`
     padding: 50px 40px;
   }
   @media (max-width: 768px) {
+    margin-top: 100px;
     padding: 50px 30px;
   }
   @media (max-width: 500px) {

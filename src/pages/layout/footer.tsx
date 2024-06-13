@@ -9,6 +9,7 @@ const Footer = () => {
 
 const StyledComponent = styled(Box)`
   display: flex;
+  position: fixed;
   width: 100%;
   align-items: center;
   justify-content: center;
@@ -18,7 +19,8 @@ const StyledComponent = styled(Box)`
   font-size: 16px;
   margin-top: 50px;
   margin-bottom: 20px;
-  z-index: 100;
+  bottom: 0;
+  z-index: 20;
   @media (max-width: 1280px) {
     font-size: 15px;
   }

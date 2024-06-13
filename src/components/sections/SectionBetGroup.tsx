@@ -1,7 +1,7 @@
 import { Box, Collapse } from "@mui/material";
 import styled from "styled-components";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { getGoogleSheetData } from "../../utils/functions";
+import { RiLogoutBoxRLine, RiLogoutBoxLine } from "react-icons/ri";
+// import { getGoogleSheetData } from "../../utils/functions";
 
 const SectionBetGroup = ({
   data,
@@ -16,7 +16,7 @@ const SectionBetGroup = ({
     }
     setIndexGroupClicked(index);
 
-    await getGoogleSheetData();
+    // await getGoogleSheetData();
   };
 
   return (
@@ -24,7 +24,11 @@ const SectionBetGroup = ({
       <StyledComponent>
         <ButtonGroupBet onClick={() => handleClickDown()}>
           <span> {data.groupName}</span>
-          {indexGroupClicked === index ? <FaChevronUp /> : <FaChevronDown />}
+          {indexGroupClicked === index ? (
+            <RiLogoutBoxLine />
+          ) : (
+            <RiLogoutBoxRLine />
+          )}
         </ButtonGroupBet>
         <Collapse in={indexGroupClicked === index ? true : false}>
           <SectionContent>
@@ -40,6 +44,7 @@ const SectionBetGroup = ({
                         <SectionEachOption>
                           <TextOption>{each.optionName}</TextOption>
                           <TextRatio>Ratio: {each.ratio}</TextRatio>
+
                           <SectionInput>
                             <InputBetValue
                               component="input"
@@ -156,13 +161,14 @@ const SectionEachBet = styled(Box)`
 
 const TextBetGroupName = styled(Box)`
   /* text-transform: uppercase; */
-  color: white;
+  color: #73da13;
 `;
 
 const SectionBetOptionGroup = styled(Box)`
   display: flex;
   width: 100%;
   flex-direction: column;
+  color: white;
 `;
 
 const SectionEachOption = styled(Box)`
@@ -173,12 +179,21 @@ const SectionEachOption = styled(Box)`
   @media (max-width: 768px) {
     margin-top: 10px;
   }
+  @media (max-width: 600px) {
+    display: grid;
+    width: 100%;
+    margin-top: 20px;
+    grid-template-columns: 2fr 1fr;
+    grid-row-gap: 10px;
+    grid-column-gap: 10px;
+  }
 `;
 
 const TextOption = styled(Box)`
   display: flex;
   flex: 1;
   margin-left: 100px;
+  white-space: nowrap;
   @media (max-width: 1440px) {
     margin-left: 70px;
     flex: 0.8;
@@ -189,6 +204,9 @@ const TextOption = styled(Box)`
   }
   @media (max-width: 768px) {
     margin-left: 20px;
+  }
+  @media (max-width: 600px) {
+    margin-left: 0px;
   }
 `;
 
@@ -206,6 +224,10 @@ const TextRatio = styled(Box)`
   }
   @media (max-width: 768px) {
     margin-left: 20px;
+    flex: 0.4;
+  }
+  @media (max-width: 600px) {
+    justify-content: flex-end;
   }
 `;
 
@@ -230,10 +252,14 @@ const SectionInput = styled(Box)`
   @media (max-width: 768px) {
     padding: 0px 15px;
     margin-left: 20px;
-    flex: 1;
+    flex: 0.8;
     &:hover {
       box-shadow: 0px 0px 6px white;
     }
+  }
+  @media (max-width: 600px) {
+    margin-left: 0px;
+    width: 100%;
   }
 `;
 
@@ -258,6 +284,7 @@ const InputBetValue = styled(Box)`
 
 const ButtonBet = styled(Box)`
   display: flex;
+  width: fit-content;
   justify-content: center;
   padding: 0 40px;
   box-sizing: border-box;
@@ -292,7 +319,11 @@ const ButtonBet = styled(Box)`
     height: 35px;
   }
   @media (max-width: 768px) {
-    margin-left: 20px;
+    margin-left: 10px;
+  }
+  @media (max-width: 600px) {
+    flex: 1;
+    width: 100%;
   }
 `;
 

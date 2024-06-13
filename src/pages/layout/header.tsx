@@ -48,7 +48,7 @@ const Header = () => {
           {isConnected
             ? `${address?.slice(0, 6)}...${address?.slice(address.length - 4)}`
             : "Connect wallet"}
-          {isConnected ? <ButtonMyBets>My Bets</ButtonMyBets> : <></>}
+
           {disconnectOpen && isConnected ? (
             <ButtonDisconnect onClick={handleDisconnect} ref={refConnectDown}>
               Disconnect
@@ -57,6 +57,7 @@ const Header = () => {
             <></>
           )}
         </ButtonConnect>
+        {isConnected ? <ButtonMyBets>My Bets</ButtonMyBets> : <></>}
       </SectionButtonGroup>
     </StyledComponent>
   );
@@ -64,6 +65,7 @@ const Header = () => {
 
 const StyledComponent = styled(Box)`
   display: flex;
+  position: relative;
   width: 100%;
   height: 300px;
   justify-content: space-between;
@@ -91,12 +93,11 @@ const StyledComponent = styled(Box)`
   }
   @media (max-width: 500px) {
     padding: 50px 30px;
-    height: 300px;
-  }
-  @media (max-width: 390px) {
     height: 270px;
   }
-  z-index: 20;
+  @media (max-width: 390px) {
+  }
+  /* z-index: 20; */
 `;
 
 const SectionButtonGroup = styled(Box)`
@@ -104,7 +105,7 @@ const SectionButtonGroup = styled(Box)`
   /* align-items: center; */
   @media (max-width: 768px) {
     margin-top: 10px;
-    padding-bottom:-100px;
+    padding-bottom: -100px;
   }
   @media (max-width: 500px) {
     margin-top: 10px;
@@ -114,8 +115,11 @@ const SectionButtonGroup = styled(Box)`
 
 const ButtonHowItWorks = styled(Box)`
   display: flex;
+  position: absolute;
   width: 250px;
   height: 50px;
+  left: 100px;
+  top: 50px;
   justify-content: center;
   align-items: center;
   background-color: #c40632;
@@ -138,22 +142,31 @@ const ButtonHowItWorks = styled(Box)`
     width: 200px;
     height: 45px;
     font-size: 18px;
+    left: 60px;
+  }
+  @media (max-width: 1280px) {
+    left: 40px;
   }
   @media (max-width: 768px) {
-    width: 300px;
+    width: 250px;
     height: 35px;
     font-size: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 250px;
   }
   @media (max-width: 500px) {
     width: 200px;
     height: 35px;
     font-size: 15px;
   }
+
+  z-index: 100;
 `;
 
 const ButtonConnect = styled(Box)`
   display: flex;
-  position: relative;
+  position: absolute;
   width: 250px;
   height: 50px;
   justify-content: center;
@@ -167,6 +180,8 @@ const ButtonConnect = styled(Box)`
   border-radius: 20px;
   cursor: pointer;
   user-select: none;
+  right: 100px;
+  top: 50px;
 
   transition: 0.5s;
   &:hover {
@@ -177,17 +192,26 @@ const ButtonConnect = styled(Box)`
     width: 200px;
     height: 45px;
     font-size: 18px;
+    right: 60px;
+  }
+  @media (max-width: 1280px) {
+    right: 40px;
   }
   @media (max-width: 768px) {
-    width: 300px;
+    width: 250px;
     height: 35px;
     font-size: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 300px;
   }
   @media (max-width: 500px) {
     width: 200px;
     height: 35px;
     font-size: 15px;
   }
+
+  z-index: 100;
 `;
 
 const ButtonDisconnect = styled(Box)`
@@ -223,10 +247,10 @@ const ButtonDisconnect = styled(Box)`
     top: 60px;
   }
   @media (max-width: 768px) {
-    width: 300px;
+    width: 250px;
     height: 35px;
     font-size: 16px;
-    top: 50px;
+    top: 45px;
   }
   @media (max-width: 500px) {
     width: 200px;
@@ -234,6 +258,8 @@ const ButtonDisconnect = styled(Box)`
     font-size: 15px;
     top: 45px;
   }
+
+  z-index: 110;
 `;
 
 const ButtonMyBets = styled(Box)`
@@ -253,9 +279,8 @@ const ButtonMyBets = styled(Box)`
   cursor: pointer;
   user-select: none;
 
-  left: 50%;
-  transform: translateX(-50%);
-  top: 60px;
+  right: 100px;
+  top: 110px;
 
   transition: 0.5s;
   &:hover {
@@ -266,20 +291,26 @@ const ButtonMyBets = styled(Box)`
     width: 200px;
     height: 45px;
     font-size: 18px;
-    top: 60px;
+    right: 60px;
+  }
+  @media (max-width: 1280px) {
+    right: 40px;
   }
   @media (max-width: 768px) {
-    width: 300px;
+    width: 250px;
     height: 35px;
     font-size: 16px;
-    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 345px;
   }
   @media (max-width: 500px) {
     width: 200px;
     height: 35px;
     font-size: 15px;
-    top: 45px;
   }
+
+  z-index: 90;
 `;
 
 const SectionLogo = styled(Box)`
@@ -289,6 +320,17 @@ const SectionLogo = styled(Box)`
   top: 30px;
   width: 160px;
   z-index: 21;
+
+  @media (max-width: 1280px) {
+    width: 150px;
+  }
+  @media (max-width: 375px) {
+    width: 130px;
+    top: 40px;
+  }
+  /* @media (max-width: 500px) {
+    width: 130px;
+  } */
 `;
 
 export default Header;
