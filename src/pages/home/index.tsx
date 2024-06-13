@@ -8,9 +8,6 @@ import { useEffect, useState } from "react";
 const Home = () => {
   const [indexGroupClicked, setIndexGroupClicked] = useState(-1);
 
-  useEffect(() => {
-    // getGoogleSheetData();
-  }, []);
   return (
     <StyledComponent>
       <SectionEachBet>

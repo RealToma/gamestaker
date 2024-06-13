@@ -37,6 +37,9 @@ const Header = () => {
 
   return (
     <StyledComponent>
+      <SectionLogo>
+        <img src={"/assets/images/icons/logo.png"} width={"100%"} alt="logo" />
+      </SectionLogo>
       <ButtonHowItWorks onClick={() => handleOpenWorks()}>
         HOW IT WORKS
       </ButtonHowItWorks>
@@ -62,11 +65,11 @@ const Header = () => {
 const StyledComponent = styled(Box)`
   display: flex;
   width: 100%;
-  height: 350px;
+  height: 300px;
   justify-content: space-between;
   padding: 50px 80px;
   box-sizing: border-box;
-  background-image: url("/assets/images/background/header.png");
+  /* background-image: url("/assets/images/background/header.png"); */
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -82,24 +85,30 @@ const StyledComponent = styled(Box)`
   }
   @media (max-width: 768px) {
     padding: 50px 50px;
-    height: 300px;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
   }
   @media (max-width: 500px) {
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-end;
     padding: 50px 30px;
+    height: 300px;
   }
   @media (max-width: 390px) {
-    height: 250px;
+    height: 270px;
   }
+  z-index: 100;
 `;
 
 const SectionButtonGroup = styled(Box)`
   display: flex;
   /* align-items: center; */
+  @media (max-width: 768px) {
+    margin-top: 10px;
+    padding-bottom: 10px;
+  }
   @media (max-width: 500px) {
     margin-top: 10px;
+    padding-bottom: 0px;
   }
 `;
 
@@ -131,12 +140,12 @@ const ButtonHowItWorks = styled(Box)`
     font-size: 18px;
   }
   @media (max-width: 768px) {
-    width: 180px;
-    height: 40px;
+    width: 300px;
+    height: 35px;
     font-size: 16px;
   }
   @media (max-width: 500px) {
-    width: 150px;
+    width: 200px;
     height: 35px;
     font-size: 15px;
   }
@@ -170,12 +179,12 @@ const ButtonConnect = styled(Box)`
     font-size: 18px;
   }
   @media (max-width: 768px) {
-    width: 180px;
-    height: 40px;
+    width: 300px;
+    height: 35px;
     font-size: 16px;
   }
   @media (max-width: 500px) {
-    width: 150px;
+    width: 200px;
     height: 35px;
     font-size: 15px;
   }
@@ -214,13 +223,13 @@ const ButtonDisconnect = styled(Box)`
     top: 60px;
   }
   @media (max-width: 768px) {
-    width: 180px;
-    height: 40px;
+    width: 300px;
+    height: 35px;
     font-size: 16px;
     top: 50px;
   }
   @media (max-width: 500px) {
-    width: 150px;
+    width: 200px;
     height: 35px;
     font-size: 15px;
     top: 45px;
@@ -260,17 +269,26 @@ const ButtonMyBets = styled(Box)`
     top: 60px;
   }
   @media (max-width: 768px) {
-    width: 180px;
-    height: 40px;
+    width: 300px;
+    height: 35px;
     font-size: 16px;
-    top: 50px;
+    top: 45px;
   }
   @media (max-width: 500px) {
-    width: 150px;
+    width: 200px;
     height: 35px;
     font-size: 15px;
     top: 45px;
   }
+`;
+
+const SectionLogo = styled(Box)`
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 30px;
+  width: 160px;
+  z-index: 100;
 `;
 
 export default Header;
