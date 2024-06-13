@@ -36,8 +36,8 @@ code {
 
 .notification-container {
   width: fit-content !important;
-  font-family: Garet;
-  font-size: 16px;
+  font-family: 'Inter';
+  font-size: 18px;
   font-style: normal;
   font-weight: 600;
 
@@ -54,5 +54,12 @@ code {
   opacity: 1 !important;
 }
 .notification-info {
-  background-color: #c1ff72 !important;
+  background-color: #1975ff !important;
+  color: white !important;
 }
+
+.notification-warning {
+  background-color: #ffae00 !important;
+  color: white !important;
+}
+

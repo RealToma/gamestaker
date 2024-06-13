@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useAccount, useDisconnect } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useOutsideDetector } from "../../hooks/useOutsideDetector";
+import { NotificationManager } from "react-notifications";
 
 const Header = () => {
   const { isConnected, address } = useAccount();
@@ -35,6 +36,10 @@ const Header = () => {
     window.open("https://github.com/RealToma/gamestaker/blob/main/README.md");
   };
 
+  const handleMyBets = () => {
+    return NotificationManager.info("Coming soon.", "", 3000);
+  };
+
   return (
     <StyledComponent>
       <SectionLogo>
@@ -57,7 +62,11 @@ const Header = () => {
             <></>
           )}
         </ButtonConnect>
-        {isConnected ? <ButtonMyBets>My Bets</ButtonMyBets> : <></>}
+        {isConnected ? (
+          <ButtonMyBets onClick={() => handleMyBets()}>My Bets</ButtonMyBets>
+        ) : (
+          <></>
+        )}
       </SectionButtonGroup>
     </StyledComponent>
   );
