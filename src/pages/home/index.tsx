@@ -2,11 +2,15 @@ import { Box } from "@mui/material";
 import styled from "styled-components";
 import { dataBetGroupList } from "../../data/group";
 import SectionBetGroup from "../../components/sections/SectionBetGroup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+// import { getGoogleSheetData } from "../../utils/functions";
 
 const Home = () => {
   const [indexGroupClicked, setIndexGroupClicked] = useState(-1);
 
+  useEffect(() => {
+    // getGoogleSheetData();
+  }, []);
   return (
     <StyledComponent>
       <SectionEachBet>

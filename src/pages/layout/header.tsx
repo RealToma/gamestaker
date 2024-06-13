@@ -41,11 +41,11 @@ const Header = () => {
         HOW IT WORKS
       </ButtonHowItWorks>
       <SectionButtonGroup>
-        {isConnected ? <ButtonMyBets>My Bets</ButtonMyBets> : <></>}
         <ButtonConnect onClick={connectWallet}>
           {isConnected
             ? `${address?.slice(0, 6)}...${address?.slice(address.length - 4)}`
             : "Connect wallet"}
+          {isConnected ? <ButtonMyBets>My Bets</ButtonMyBets> : <></>}
           {disconnectOpen && isConnected ? (
             <ButtonDisconnect onClick={handleDisconnect} ref={refConnectDown}>
               Disconnect
@@ -64,17 +64,43 @@ const StyledComponent = styled(Box)`
   width: 100%;
   height: 350px;
   justify-content: space-between;
-  padding: 100px 80px;
+  padding: 50px 80px;
   box-sizing: border-box;
   background-image: url("/assets/images/background/header.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
+
+  @media (max-width: 1600px) {
+  }
+  @media (max-width: 1440px) {
+    padding: 50px 60px;
+  }
+  @media (max-width: 1280px) {
+    padding: 50px 50px;
+    background-size: cover;
+  }
+  @media (max-width: 768px) {
+    padding: 50px 50px;
+    height: 300px;
+  }
+  @media (max-width: 500px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 50px 30px;
+  }
+  @media (max-width: 390px) {
+    height: 250px;
+  }
 `;
 
 const SectionButtonGroup = styled(Box)`
   display: flex;
   /* align-items: center; */
+  @media (max-width: 500px) {
+    margin-top: 10px;
+  }
 `;
 
 const ButtonHowItWorks = styled(Box)`
@@ -97,6 +123,22 @@ const ButtonHowItWorks = styled(Box)`
   &:hover {
     background-color: white;
     color: #c40632;
+  }
+
+  @media (max-width: 1440px) {
+    width: 200px;
+    height: 45px;
+    font-size: 18px;
+  }
+  @media (max-width: 768px) {
+    width: 180px;
+    height: 40px;
+    font-size: 16px;
+  }
+  @media (max-width: 500px) {
+    width: 150px;
+    height: 35px;
+    font-size: 15px;
   }
 `;
 
@@ -121,6 +163,21 @@ const ButtonConnect = styled(Box)`
   &:hover {
     background-color: white;
     color: #ffca00;
+  }
+  @media (max-width: 1440px) {
+    width: 200px;
+    height: 45px;
+    font-size: 18px;
+  }
+  @media (max-width: 768px) {
+    width: 180px;
+    height: 40px;
+    font-size: 16px;
+  }
+  @media (max-width: 500px) {
+    width: 150px;
+    height: 35px;
+    font-size: 15px;
   }
 `;
 
@@ -150,11 +207,30 @@ const ButtonDisconnect = styled(Box)`
     background-color: white;
     color: #1e202a;
   }
+  @media (max-width: 1440px) {
+    width: 200px;
+    height: 45px;
+    font-size: 18px;
+    top: 60px;
+  }
+  @media (max-width: 768px) {
+    width: 180px;
+    height: 40px;
+    font-size: 16px;
+    top: 50px;
+  }
+  @media (max-width: 500px) {
+    width: 150px;
+    height: 35px;
+    font-size: 15px;
+    top: 45px;
+  }
 `;
 
 const ButtonMyBets = styled(Box)`
   display: flex;
-  width: 200px;
+  position: absolute;
+  width: 250px;
   height: 50px;
   justify-content: center;
   align-items: center;
@@ -168,12 +244,32 @@ const ButtonMyBets = styled(Box)`
   cursor: pointer;
   user-select: none;
 
-  margin-right: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 60px;
 
   transition: 0.5s;
   &:hover {
     background-color: white;
     color: #48b415;
+  }
+  @media (max-width: 1440px) {
+    width: 200px;
+    height: 45px;
+    font-size: 18px;
+    top: 60px;
+  }
+  @media (max-width: 768px) {
+    width: 180px;
+    height: 40px;
+    font-size: 16px;
+    top: 50px;
+  }
+  @media (max-width: 500px) {
+    width: 150px;
+    height: 35px;
+    font-size: 15px;
+    top: 45px;
   }
 `;
 

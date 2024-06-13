@@ -2,6 +2,7 @@ import { Box, Collapse } from "@mui/material";
 import styled from "styled-components";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useState } from "react";
+import { getGoogleSheetData } from "../../utils/functions";
 
 const SectionBetGroup = ({
   data,
@@ -10,7 +11,7 @@ const SectionBetGroup = ({
   setIndexGroupClicked,
 }: any) => {
   const [flagDown, setFlagDown] = useState(false);
-  const handleClickDown = () => {
+  const handleClickDown = async () => {
     setFlagDown(!flagDown);
     console.log("indexGroupClicked:", indexGroupClicked);
     if (indexGroupClicked === index) {
@@ -18,6 +19,8 @@ const SectionBetGroup = ({
       return;
     }
     setIndexGroupClicked(index);
+
+    await getGoogleSheetData();
   };
 
   return (
@@ -26,23 +29,25 @@ const SectionBetGroup = ({
         <span> {data.groupName}</span>
         {!flagDown ? <FaChevronDown /> : <FaChevronUp />}
       </ButtonGroupBet>
-      <Collapse in={flagDown ? true : false}>
+      <Collapse in={indexGroupClicked === index ? true : false}>
         <SectionContent>
-          {data?.groupBet.map((each: any, index: any) => {
+          {data?.groupBets.map((each: any, index: any) => {
             return (
               <SectionEachBet key={index}>
                 <TextBetGroupName>
-                  {each.groupBetName}&nbsp;&nbsp;{"<BET BEFORE>"}
+                  {each.groupBetName}&nbsp;&nbsp;{each.betBefore}
                 </TextBetGroupName>
                 <SectionBetOptionGroup>
-                  {each.groupBetList.map((each: any, index: any) => {
+                  {each.options.map((each: any) => {
                     return (
                       <SectionEachOption>
                         <TextOption>{each.optionName}</TextOption>
-                        <TextRatio>{each.ratio}</TextRatio>
+                        <TextRatio>Ratio: {each.ratio}</TextRatio>
                         <SectionInput>
-                          <InputBetValue component='input'>
-                          </InputBetValue>
+                          <InputBetValue
+                            component="input"
+                            placeholder="Input token amount"
+                          ></InputBetValue>
                         </SectionInput>
                         <ButtonBet>Bet</ButtonBet>
                       </SectionEachOption>
@@ -106,7 +111,7 @@ const SectionEachBet = styled(Box)`
 `;
 
 const TextBetGroupName = styled(Box)`
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   color: white;
 `;
 
@@ -119,7 +124,7 @@ const SectionBetOptionGroup = styled(Box)`
 const SectionEachOption = styled(Box)`
   display: flex;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 15px;
   align-items: center;
 `;
 
@@ -145,6 +150,11 @@ const SectionInput = styled(Box)`
   height: 50px;
   padding: 0px 20px;
   box-sizing: border-box;
+
+  transition: 0.3s;
+  &:hover {
+    box-shadow: 0px 0px 10px white;
+  }
 `;
 
 const InputBetValue = styled(Box)`
@@ -157,7 +167,7 @@ const InputBetValue = styled(Box)`
   font-family: "Inter";
   font-weight: 600;
   font-size: 20px;
-`
+`;
 
 const ButtonBet = styled(Box)`
   display: flex;
