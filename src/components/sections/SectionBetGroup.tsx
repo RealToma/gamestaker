@@ -26,6 +26,8 @@ const SectionBetGroup = ({
   const handleBet = async () => {
     if (!isConnected) {
       return NotificationManager.warning("Connect your wallet.", "", 3000);
+    } else {
+      NotificationManager.info("Coming soon.", "", 3000);
     }
   };
 
@@ -50,20 +52,51 @@ const SectionBetGroup = ({
                   </TextBetGroupName>
                   <SectionBetOptionGroup>
                     {each.options.map((each: any) => {
-                      return (
-                        <SectionEachOption>
-                          <TextOption>{each.optionName}</TextOption>
-                          <TextRatio>Ratio: {each.ratio}</TextRatio>
+                      if (each.optionName === "Exact Score") {
+                        return (
+                          <SectionEachOption>
+                            <TextOption>{each.optionName}</TextOption>
+                            <TextRatio>Ratio: {each.ratio}</TextRatio>
+                            <SectionGroupInput>
+                              <SectionInput>
+                                <InputBetValue
+                                  component="input"
+                                  placeholder="Input local : visitant"
+                                ></InputBetValue>
+                              </SectionInput>
+                              <SectionInput ml="10px">
+                                <InputBetValue
+                                  component="input"
+                                  placeholder="Input token amount"
+                                ></InputBetValue>
+                              </SectionInput>
+                            </SectionGroupInput>
 
-                          <SectionInput>
-                            <InputBetValue
-                              component="input"
-                              placeholder="Input token amount"
-                            ></InputBetValue>
-                          </SectionInput>
-                          <ButtonBet onClick={() => handleBet()}>Bet</ButtonBet>
-                        </SectionEachOption>
-                      );
+                            <ButtonBet onClick={() => handleBet()}>
+                              Bet
+                            </ButtonBet>
+                          </SectionEachOption>
+                        );
+                      } else {
+                        return (
+                          <SectionEachOption>
+                            <TextOption>{each.optionName}</TextOption>
+                            <TextRatio>Ratio: {each.ratio}</TextRatio>
+                            <SectionGroupInput>
+                              <SectionInput>
+                                <InputBetValue
+                                  component="input"
+                                  placeholder="Input token amount"
+                                ></InputBetValue>
+                              </SectionInput>
+                            </SectionGroupInput>
+
+                            <ButtonBet onClick={() => handleBet()}>
+                              Bet
+                            </ButtonBet>
+                          </SectionEachOption>
+                        );
+                      }
                     })}
                   </SectionBetOptionGroup>
                 </SectionEachBet>
@@ -241,11 +274,19 @@ const TextRatio = styled(Box)`
   }
 `;
 
-const SectionInput = styled(Box)`
+const SectionGroupInput = styled(Box)`
   display: flex;
   flex: 1.5;
-  width: 100%;
   margin-left: 50px;
+  @media (max-width: 768px) {
+    margin-left: 20px;
+    flex: 0.8;
+  }
+`;
+
+const SectionInput = styled(Box)`
+  display: flex;
+  width: 100%;
   background-color: #272727;
   border-radius: 20px;
   height: 40px;
@@ -261,7 +302,6 @@ const SectionInput = styled(Box)`
   }
   @media (max-width: 768px) {
     padding: 0px 15px;
-    margin-left: 20px;
     flex: 0.8;
     &:hover {
       box-shadow: 0px 0px 6px white;
@@ -275,6 +315,7 @@ const SectionInput = styled(Box)`
 
 const InputBetValue = styled(Box)`
   display: flex;
+  flex: 1;
   width: 100%;
   border: none;
   outline: none;
