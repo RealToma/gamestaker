@@ -1,0 +1,121 @@
+openapi: 3.0.0
+info:
+  title: GameStakers Betting API
+  version: 1.1.0
+
+paths:
+  /create_game:
+    post: 
+      summary: Add a game to the tournament
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StakedGame'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StakedGame'
+
+  /create_stake:
+    post:
+      summary: Create a new stake
+      description: choose one of the options in from a fixed choice list, e.g. win/lose/tie
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OptionStake'
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Invalid input
+
+  /cash_out:
+    get:
+      summary: retrieve winnings
+      parameters:
+        - name: sendTo
+          description: solidity address to send winnings to
+          example: "0x000000000000000000000000000000000000dEaD"
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+
+
+components:
+  schemas:
+    StakedGame:
+      type: object
+      required:
+        - gameID
+        - usdc
+        - treasury
+        - noOfOptions
+      properties:
+        gameID:
+          type: string
+          description: a unique identifying string of max. 15 characters
+          example: "DeSct240610"
+        usdc:
+          type: string
+          description: the Solidity address of the anchor stablecoin smart contract in hex format
+          example: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        nfticket:
+          type: string
+          description: the Solidity address of the NFTicket smart contract in hex format
+          example: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        treasury:
+          type: string
+          description: the Solidity address of the StakeTreasury smart contract in hex format
+          example: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        noOfOptions:
+          type: integer
+          description: number of disjunct results this staking can have
+          example: 3
+
+    OptionStake:
+      type: object
+      properties:
+        option:
+          description: which of the noOfOptions to stake on
+          example: 1
+          type: integer
+        erc20Contract:
+          type: string
+          description: address of stablecoin smart contract used to stake
+          example: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+          pattern: '^0x[a-fA-F0-9]{40}$'
+        stakedAmount:
+          description: (amount of units) ** (decimals of erc20Contract) of erc20Contract tokens
+          example: "'180000000' for 180 USDC having 6 decimals"
+        
+    Receipt:
+      type: object
+      properties:
+        amountPaidOut: 
+          type: integer
+          description: (amount of units) ** (decimals of erc20Contract) of erc20Contract tokens
+          example: "'36000000' for 360 USDC having 6 decimals"
+        erc20Contract:
+          type: string
+          description: address of stablecoin smart contract used to stake
+          example: "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+          pattern: '^0x[a-fA-F0-9]{40}$'
+          
+
