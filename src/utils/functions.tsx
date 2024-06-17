@@ -8,7 +8,7 @@ const abiStakeContract = abiStakeJson.abi;
 const abiMyUSDCContract = abiMyUSDCJson.abi;
 
 const provider = new ethers.InfuraProvider(
-  process.env.REACT_APP_IS_TESTNET === "true" ? "matic-amoy" : "matic",
+  process.env.REACT_APP_ENABLE_TESTNET === "true" ? "matic-amoy" : "matic",
   process.env.REACT_APP_KEY_INFRA
 );
 
@@ -24,15 +24,20 @@ const contractStake = new ethers.Contract(
   provider
 );
 
-export const getBalance = async (address: any) => {
+export const getMyBalance = async (address: any) => {
   try {
-    const resMyUSDC = await contractMyUSDC.balanceOf(address);
-    const balanceMyUSDC: any = parseFloat(formatUnits(resMyUSDC._hex, 18));
-    // console.log("myBalanceZKHive:", myBalanceZKHive);
+    const resPolygonBalance = await provider.getBalance(address);
+    const balancePolygon: any = parseFloat(formatUnits(resPolygonBalance, 6));
+    console.log("balance of polygon:", balancePolygon);
 
-    return { balanceMyUSDC: balanceMyUSDC };
+    const resMyUSDC = await contractMyUSDC.balanceOf(address);
+
+    const balanceMyUSDC: any = parseFloat(formatUnits(resMyUSDC, 6));
+    console.log("balance of myUsdc:", balanceMyUSDC);
+
+    return { balancePolygon: balancePolygon, balanceMyUSDC: balanceMyUSDC };
   } catch (error) {
-    console.log("error of handleCheck", error);
+    console.log("error of getMyBalance", error);
   }
 };
 

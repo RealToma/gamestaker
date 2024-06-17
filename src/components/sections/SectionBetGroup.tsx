@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { RiLogoutBoxRLine, RiLogoutBoxLine } from "react-icons/ri";
 import { useAccount } from "wagmi";
 import { NotificationManager } from "react-notifications";
+import { getMyBalance } from "../../utils/functions";
 // import { getGoogleSheetData } from "../../utils/functions";
 
 const SectionBetGroup = ({
@@ -11,7 +12,7 @@ const SectionBetGroup = ({
   indexGroupClicked,
   setIndexGroupClicked,
 }: any) => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
 
   const handleClickDown = async () => {
     if (indexGroupClicked === index) {
@@ -26,9 +27,11 @@ const SectionBetGroup = ({
   const handleBet = async () => {
     if (!isConnected) {
       return NotificationManager.warning("Connect your wallet.", "", 3000);
-    } else {
-      NotificationManager.info("Coming soon.", "", 3000);
     }
+    // NotificationManager.info("Coming soon.", "", 3000);
+    console.log("connected net stat:", isConnected);
+    console.log("Wallet Address:", address);
+    await getMyBalance(address);
   };
 
   return (
