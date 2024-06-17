@@ -5,37 +5,28 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
-import { bsc, bronosTestnet, polygon, polygonMumbai } from "wagmi/chains";
+import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { http, WagmiProvider } from "wagmi";
+import { polygon, polygonAmoy } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import App from "./App";
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [
-    // avalanche,
-    // avalancheFuji,
-    ...(process.env.REACT_APP_ENABLE_TESTNET === "true"
-      ? [bronosTestnet]
-      : [bsc]),
-  ],
-  [publicProvider()]
-);
-
-const { connectors } = getDefaultWallets({
+const config = getDefaultConfig({
   appName: "GameStaker",
-  // projectId: process.env.REACT_APP_PROJECT_ID as any,
   projectId: "c9bfdfeba6902d82c74c3c748bcd073e",
-  chains,
+  chains: [
+    (process.env.REACT_APP_ENABLE_TESTNET as any) === "false"
+      ? polygon
+      : polygonAmoy,
+  ],
+  transports: {
+    [polygon.id]: http(),
+    [polygonAmoy.id]: http(),
+  },
 });
 
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
-});
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -43,11 +34,13 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains}>
-        <App />
-      </RainbowKitProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
+          <App />
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   </React.StrictMode>
 );
 

@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import styled from "styled-components";
 import { dataBetGroupList } from "../../data/group";
 import SectionBetGroup from "../../components/sections/SectionBetGroup";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { getGoogleSheetData } from "../../utils/functions";
 
 const Home = () => {
