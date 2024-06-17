@@ -1,4 +1,40 @@
 import axios from "axios";
+import { ethers, formatUnits } from "ethers";
+import abiStakeJson from "../web3/abis/SingleStake.sol/SingleStake.json";
+import abiMyUSDCJson from "../web3/abis/MyUSDC.sol/MyUSDC.json";
+import { addressDeployContracts } from "../web3/addressDeployContracts";
+
+const abiStakeContract = abiStakeJson.abi;
+const abiMyUSDCContract = abiMyUSDCJson.abi;
+
+const provider = new ethers.InfuraProvider(
+  process.env.REACT_APP_IS_TESTNET === "true" ? "matic-amoy" : "matic",
+  process.env.REACT_APP_KEY_INFRA
+);
+
+const contractMyUSDC = new ethers.Contract(
+  addressDeployContracts.myUSDC,
+  abiMyUSDCContract,
+  provider
+);
+
+const contractStake = new ethers.Contract(
+  addressDeployContracts.STAKER_ADDRESS,
+  abiStakeContract,
+  provider
+);
+
+export const getBalance = async (address: any) => {
+  try {
+    const resMyUSDC = await contractMyUSDC.balanceOf(address);
+    const balanceMyUSDC: any = parseFloat(formatUnits(resMyUSDC._hex, 18));
+    // console.log("myBalanceZKHive:", myBalanceZKHive);
+
+    return { balanceMyUSDC: balanceMyUSDC };
+  } catch (error) {
+    console.log("error of handleCheck", error);
+  }
+};
 
 export const getGoogleSheetData = async () => {
   try {
