@@ -45,16 +45,18 @@ const SectionBetGroup = ({
         <Collapse in={indexGroupClicked === index ? true : false}>
           <SectionContent>
             {data?.groupBets.map((each: any, index: any) => {
+              const _index = index;
               return (
-                <SectionEachBet key={index}>
+                <SectionEachBet key={_index}>
                   <TextBetGroupName>
                     {each.groupBetName}&nbsp;&nbsp;{each.betBefore}
                   </TextBetGroupName>
                   <SectionBetOptionGroup>
-                    {each.options.map((each: any) => {
+                    {each.options.map((each: any, index: any) => {
+                      const __index = index;
                       if (each.optionName === "Exact Score") {
                         return (
-                          <SectionEachOption>
+                          <SectionEachOption key={__index}>
                             <TextOption>{each.optionName}</TextOption>
                             <TextRatio>Ratio: {each.ratio}</TextRatio>
                             <SectionGroupInput>
@@ -79,7 +81,7 @@ const SectionBetGroup = ({
                         );
                       } else {
                         return (
-                          <SectionEachOption>
+                          <SectionEachOption key={__index}>
                             <TextOption>{each.optionName}</TextOption>
                             <TextRatio>Ratio: {each.ratio}</TextRatio>
                             <SectionGroupInput>
