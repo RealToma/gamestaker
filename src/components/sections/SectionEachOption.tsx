@@ -19,7 +19,6 @@ const SectionEachOption = ({ each }: any) => {
   const publicClient = usePublicClient();
 
   const handleBet = async () => {
-    console.log("each:", each);
     try {
       if (!isConnected || !publicClient || !walletClient || !address) {
         return NotificationManager.warning("Connect your wallet.", "", 3000);
@@ -152,7 +151,7 @@ const SectionEachOption = ({ each }: any) => {
 
       <ButtonBet
         disabled={isProcess}
-        isProcess={isProcess ? 1 : 0}
+        isprocess={isProcess ? 1 : 0}
         onClick={() => handleBet()}
       >
         {isProcess ? "Processing" : "Bet"}
@@ -302,7 +301,7 @@ const ButtonBet = styled.button`
   font-size: 16px;
   text-transform: uppercase;
   border-radius: 20px;
-  cursor: ${({ isProcess }: any) => (isProcess ? "wait" : "pointer")};
+  cursor: ${({ isprocess }: any) => (isprocess ? "wait" : "pointer")};
   user-select: none;
 
   transition: 0.5s;
