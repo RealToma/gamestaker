@@ -4,8 +4,8 @@ import abiStakeJson from "../web3/abis/SingleStake.sol/SingleStake.json";
 import abiMyUSDCJson from "../web3/abis/MyUSDC.sol/MyUSDC.json";
 import { addressDeployContracts } from "../web3/addressDeployContracts";
 
-const abiStakeContract = abiStakeJson.abi;
-const abiMyUSDCContract = abiMyUSDCJson.abi;
+export const abiStakeContract = abiStakeJson.abi;
+export const abiMyUSDCContract = abiMyUSDCJson.abi;
 
 const provider = new ethers.InfuraProvider(
   process.env.REACT_APP_ENABLE_TESTNET === "true" ? "matic-amoy" : "matic",
@@ -27,7 +27,7 @@ const contractStake = new ethers.Contract(
 export const getMyBalance = async (address: any) => {
   try {
     const resPolygonBalance = await provider.getBalance(address);
-    const balancePolygon: any = parseFloat(formatUnits(resPolygonBalance, 6));
+    const balancePolygon: any = parseFloat(formatUnits(resPolygonBalance, 18));
     console.log("balance of polygon:", balancePolygon);
 
     const resMyUSDC = await contractMyUSDC.balanceOf(address);

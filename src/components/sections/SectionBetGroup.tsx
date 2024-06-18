@@ -1,9 +1,16 @@
 import { Box, Collapse } from "@mui/material";
 import styled from "styled-components";
 import { RiLogoutBoxRLine, RiLogoutBoxLine } from "react-icons/ri";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { NotificationManager } from "react-notifications";
-import { getMyBalance } from "../../utils/functions";
+import {
+  abiMyUSDCContract,
+  abiStakeContract,
+  getMyBalance,
+} from "../../utils/functions";
+import { useState } from "react";
+import { addressDeployContracts } from "../../web3/addressDeployContracts";
+import { Address, parseUnits } from "viem";
 // import { getGoogleSheetData } from "../../utils/functions";
 
 const SectionBetGroup = ({
@@ -13,6 +20,9 @@ const SectionBetGroup = ({
   setIndexGroupClicked,
 }: any) => {
   const { isConnected, address } = useAccount();
+  const [amountMYUSDC, setAmountMYUSDC] = useState(0);
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   const handleClickDown = async () => {
     if (indexGroupClicked === index) {
@@ -25,13 +35,82 @@ const SectionBetGroup = ({
   };
 
   const handleBet = async () => {
-    if (!isConnected) {
-      return NotificationManager.warning("Connect your wallet.", "", 3000);
+    try {
+      if (!isConnected || !publicClient || !walletClient || !address) {
+        return NotificationManager.warning("Connect your wallet.", "", 3000);
+      }
+      // NotificationManager.info("Coming soon.", "", 3000);
+      console.log("net connected:", isConnected);
+      console.log("wallet address:", address);
+      const myBalance: any = await getMyBalance(address);
+
+      if (amountMYUSDC < 100) {
+        return NotificationManager.warning(
+          "It should be greater than 100 MYUSDC.",
+          "",
+          5000
+        );
+      }
+
+      if (myBalance?.balancePolygon < 0.001) {
+        return NotificationManager.warning(
+          "You don't have enough matic.",
+          "",
+          5000
+        );
+      }
+      if (myBalance?.balanceMyUSDC < 100) {
+        return NotificationManager.warning(
+          "You don't have enough MYUSDC.",
+          "",
+          5000
+        );
+      }
+
+      console.log("amountMYUSDC:", amountMYUSDC);
+
+      const { request: requestApprove } = await publicClient.simulateContract({
+        account: address,
+        abi: abiMyUSDCContract,
+        address: addressDeployContracts.myUSDC as Address,
+        functionName: "approve",
+        args: [
+          addressDeployContracts.STAKER_ADDRESS,
+          parseUnits(amountMYUSDC.toString(), 6),
+        ],
+      });
+
+      const hashApprove = await walletClient.writeContract(requestApprove);
+
+      const resApprove = await publicClient.waitForTransactionReceipt({
+        hash: hashApprove,
+      });
+
+      console.log("resApprove:", resApprove);
+
+      const { request: requestStake } = await publicClient.simulateContract({
+        account: address,
+        abi: abiStakeContract,
+        address: addressDeployContracts.STAKER_ADDRESS as Address,
+        functionName: "create_stake",
+        args: [
+          BigInt(0),
+          addressDeployContracts.myUSDC,
+          parseUnits(amountMYUSDC.toString(), 6),
+        ],
+      });
+
+      const hashStake = await walletClient.writeContract(requestStake);
+
+      const resStake = await publicClient.waitForTransactionReceipt({
+        hash: hashStake,
+      });
+
+      
+      console.log("resStake:", resStake);
+    } catch (error) {
+      console.log("error of create stake:", error);
     }
-    // NotificationManager.info("Coming soon.", "", 3000);
-    console.log("connected net stat:", isConnected);
-    console.log("Wallet Address:", address);
-    await getMyBalance(address);
   };
 
   return (
@@ -91,7 +170,10 @@ const SectionBetGroup = ({
                               <SectionInput>
                                 <InputBetValue
                                   component="input"
-                                  placeholder="Input token amount"
+                                  placeholder="Input MYUSDC amount"
+                                  onChange={(e: any) => {
+                                    setAmountMYUSDC(e.target.value);
+                                  }}
                                 ></InputBetValue>
                               </SectionInput>
                             </SectionGroupInput>
