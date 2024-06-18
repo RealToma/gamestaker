@@ -19,6 +19,7 @@ const SectionEachOption = ({ each }: any) => {
   const publicClient = usePublicClient();
 
   const handleBet = async () => {
+    console.log("each:", each);
     try {
       if (!isConnected || !publicClient || !walletClient || !address) {
         return NotificationManager.warning("Connect your wallet.", "", 3000);
@@ -78,13 +79,24 @@ const SectionEachOption = ({ each }: any) => {
 
       console.log("resApprove:", resApprove);
 
+      const option = each.optionName;
+      let optionNumber = -1;
+      if (option === "Local wins (1)") {
+        optionNumber = 0;
+      } else if (option === "Visitant wins (2)") {
+        optionNumber = 1;
+      } else if (option === "Tie (x)") {
+        optionNumber = 2;
+      } else {
+        optionNumber = -1;
+      }
       const { request: requestStake } = await publicClient.simulateContract({
         account: address,
         abi: abiStakeContract,
         address: addressDeployContracts.STAKER_ADDRESS as Address,
         functionName: "create_stake",
         args: [
-          BigInt(0),
+          BigInt(optionNumber),
           addressDeployContracts.myUSDC,
           parseUnits(amountMYUSDC.toString(), 6),
         ],
