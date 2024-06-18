@@ -80,15 +80,15 @@ const SectionEachOption = ({ each }: any) => {
       console.log("resApprove:", resApprove);
 
       const option = each.optionName;
-      let optionNumber = -1;
+      let optionNumber = 0;
       if (option === "Local wins (1)") {
-        optionNumber = 0;
-      } else if (option === "Visitant wins (2)") {
         optionNumber = 1;
-      } else if (option === "Tie (x)") {
+      } else if (option === "Visitant wins (2)") {
         optionNumber = 2;
+      } else if (option === "Tie (x)") {
+        optionNumber = 3;
       } else {
-        optionNumber = -1;
+        optionNumber = 0;
       }
       const { request: requestStake } = await publicClient.simulateContract({
         account: address,
