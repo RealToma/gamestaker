@@ -318,6 +318,7 @@ const SectionInput = styled(Box)`
   @media (max-width: 600px) {
     margin-left: 0px;
     width: 100%;
+    flex: 1;
   }
 `;
 
