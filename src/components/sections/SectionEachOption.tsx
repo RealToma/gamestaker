@@ -107,7 +107,9 @@ const SectionEachOption = ({ each }: any) => {
         hash: hashStake,
       });
       console.log("resStake:", resStake);
-      NotificationManager.success("Completed successfully.", "", 5000);
+      setTimeout(() => {
+        NotificationManager.success("Completed successfully.", "", 5000);
+      }, 1000);
     } catch (error) {
       setProcess(false);
       console.log("error of create stake:", error);
