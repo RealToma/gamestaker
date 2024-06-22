@@ -1,25 +1,26 @@
-import "./polyfills";
-import "./index.css";
-import "@rainbow-me/rainbowkit/styles.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { http, WagmiProvider } from "wagmi";
 import { polygon, polygonAmoy } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "@rainbow-me/rainbowkit/styles.css";
 
-import App from "./App";
+// Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import RefContextProvider from "./hooks/RefContext";
 
+const isTestnet: any = true;
 const config = getDefaultConfig({
   appName: "GameStaker",
   projectId: "c9bfdfeba6902d82c74c3c748bcd073e",
-  chains: [
-    (process.env.REACT_APP_ENABLE_TESTNET as any) === "false"
-      ? polygon
-      : polygonAmoy,
-  ],
+  chains: [!isTestnet ? polygon : polygonAmoy],
   transports: {
     [polygon.id]: http(),
     [polygonAmoy.id]: http(),
@@ -37,7 +38,9 @@ root.render(
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <App />
+          <RefContextProvider>
+            <App />
+          </RefContextProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

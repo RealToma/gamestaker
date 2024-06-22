@@ -1,0 +1,45 @@
+{
+  "TYPE": "MULTIPLE_CHOICE",
+  "myUSDC": "0x7FcBcbFAD22921310fCE0Dd81E99c1dA5AfF5d5c",
+  "NFTICKET": "0x000000000000000000000000000000000000DEAD",
+  "TREASURY_ADDRESS": "0x7c56C3c28071789c06280f426712bB49792A45C8",
+  "MANAGER_LIB_ADDRESS": "0x1f2e4D66152Be95bF19826560bfd8265f8cc23C0",
+  "STAKER_ADDRESSES": [
+    {
+      "name": "SloUkr240621",
+      "address": "0x0d008878d6D408F512CB2BA5958E7302A836C5E5",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0x1f2e4D66152Be95bF19826560bfd8265f8cc23C0"
+    },
+    {
+      "name": "PorCze240618",
+      "address": "0x6847CB7Cbbb2c0a388d93F1cD9B746f712e3C479",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0x1f2e4D66152Be95bF19826560bfd8265f8cc23C0"
+    },
+    {
+      "name": "AutFra240617",
+      "address": "0x49CFaE860df55654597a4f4E28bEB4a9B6eD0339",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0x1f2e4D66152Be95bF19826560bfd8265f8cc23C0"
+    },
+    {
+      "name": "CroAlb240619",
+      "address": "0x0528A3779A9c98ac92AC5e0228E022621880af02",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0x1f2e4D66152Be95bF19826560bfd8265f8cc23C0"
+    },
+    {
+      "name": "HolFra240621",
+      "address": "0x1fE61B9b7Cd0EA0C7CA444706DE5b2776E60915E",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0x1f2e4D66152Be95bF19826560bfd8265f8cc23C0"
+    },
+    {
+      "name": "PolAut240621",
+      "address": "0xb3672D25d9b1Ae8a649e52F7Ef0029762Fcf4C25",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0x1f2e4D66152Be95bF19826560bfd8265f8cc23C0"
+    }
+  ]
+}

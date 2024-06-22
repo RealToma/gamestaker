@@ -1,16 +1,24 @@
 import { Box } from "@mui/material";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import styled from "styled-components";
 import { useAccount, useDisconnect } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useOutsideDetector } from "../../hooks/useOutsideDetector";
 import { NotificationManager } from "react-notifications";
+import { useOutsideDetector } from "../../hooks/useOutsideDetector";
+import { useNavigate } from "react-router-dom";
+import { PlaceBet } from "../../PlaceBet";
+import { ChainCode } from "../../web3/chainCode";
+import { ethers } from "ethers";
+import { fakeApiResponse } from "../../data/dataAllBets";
+import { RefContext } from "../../hooks/RefContext";
 
 const Header = () => {
   const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
   const [disconnectOpen, setDisconnectOpen] = useState(false);
   const { openConnectModal } = useConnectModal();
+  const { setArrayMyBets }: any = useContext(RefContext);
+  const navigate = useNavigate();
 
   const refConnectDown = useRef(0);
   useOutsideDetector([refConnectDown], () => setDisconnectOpen(false));
@@ -33,16 +41,69 @@ const Header = () => {
 
   const handleOpenWorks = () => {
     // window.open("/FLAPPYBEE.pdf");
-    window.open("https://github.com/RealToma/gamestaker/blob/main/README.md");
+    window.open("/sample.pdf");
   };
 
-  const handleMyBets = () => {
-    return NotificationManager.info("Coming soon.", "", 3000);
+  const handleMyBets = async () => {
+    try {
+      if (!isConnected || !address) {
+        return NotificationManager.warning("Connect your wallet.", "", 3000);
+      }
+      await ChainCode.initWallet();
+      await ChainCode.initContracts(ChainCode.signer);
+      const resGetStakes = await PlaceBet.handleGetStakes(address);
+      console.log("resGetMyBets:", resGetStakes);
+      if (resGetStakes.length === 0) {
+        return NotificationManager.error(
+          "You don't have any bets. Please place a bet.",
+          "",
+          5000
+        );
+      }
+      let arrayMySubtitles = [];
+      let arrayMyBets = [];
+      for (let i = 0; i < resGetStakes.length; i++) {
+        let resDecodeBetId = ethers.decodeBytes32String(resGetStakes[i]);
+        for (let j = 0; j < fakeApiResponse.length; j++) {
+          for (let k = 0; k < fakeApiResponse[j].subtitles.length; k++) {
+            let betName = fakeApiResponse[0].subtitles[k].id;
+            if (betName === resDecodeBetId) {
+              arrayMySubtitles.push(fakeApiResponse[0].subtitles[k]);
+            }
+          }
+        }
+      }
+      for (let i = 0; i < fakeApiResponse.length; i++) {
+        const tempArrayMyBets = {
+          title: fakeApiResponse[i]?.title,
+          id: fakeApiResponse[i]?.id,
+          subtitles: arrayMySubtitles,
+        };
+        arrayMyBets.push(tempArrayMyBets);
+      }
+      console.log("my bets details:", arrayMyBets);
+      setArrayMyBets(arrayMyBets);
+      navigate("/mybets");
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch (error) {
+      console.log("error of handleMyBets:", error);
+    }
   };
 
   return (
     <StyledComponent>
-      <SectionLogo>
+      <SectionLogo
+        onClick={() => {
+          navigate("/");
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        }}
+      >
         <img src={"/assets/images/icons/logo.png"} width={"100%"} alt="logo" />
       </SectionLogo>
       <ButtonHowItWorks onClick={() => handleOpenWorks()}>
@@ -63,7 +124,7 @@ const Header = () => {
           )}
         </ButtonConnect>
         {isConnected ? (
-          <ButtonMyBets onClick={() => handleMyBets()}>My Bets</ButtonMyBets>
+          <ButtonMyBets onClick={handleMyBets}>My Bets</ButtonMyBets>
         ) : (
           <></>
         )}
@@ -137,7 +198,7 @@ const ButtonHowItWorks = styled(Box)`
   font-weight: 600;
   font-size: 20px;
   text-transform: uppercase;
-  border-radius: 20px;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
 
@@ -186,7 +247,7 @@ const ButtonConnect = styled(Box)`
   font-weight: 600;
   font-size: 20px;
   text-transform: uppercase;
-  border-radius: 20px;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
   right: 100px;
@@ -236,7 +297,7 @@ const ButtonDisconnect = styled(Box)`
   font-weight: 600;
   font-size: 20px;
   text-transform: uppercase;
-  border-radius: 20px;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
 
@@ -284,7 +345,7 @@ const ButtonMyBets = styled(Box)`
   font-weight: 600;
   font-size: 20px;
   text-transform: uppercase;
-  border-radius: 20px;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
 
@@ -329,7 +390,8 @@ const SectionLogo = styled(Box)`
   top: 30px;
   width: 160px;
   z-index: 21;
-
+  cursor: pointer;
+  user-select: none;
   @media (max-width: 1280px) {
     width: 150px;
   }

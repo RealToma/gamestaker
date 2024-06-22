@@ -1,19 +1,19 @@
-import { Box } from "@mui/material";
 import styled from "styled-components";
-import { dataBetGroupList } from "../../data/group";
-import SectionBetGroup from "../../components/sections/SectionBetGroup";
-import { useState } from "react";
-// import { getGoogleSheetData } from "../../utils/functions";
+import { Box } from "@mui/material";
+import { useContext, useState } from "react";
+import { RefContext } from "../hooks/RefContext";
+import SectionCashoutGroup from "../components/sections/SectionCashoutGroup";
 
-const Home = () => {
-  const [indexGroupClicked, setIndexGroupClicked] = useState(-1);
+const MyBets = () => {
+  const { arrayMyBets }: any = useContext(RefContext);
+  const [indexGroupClicked, setIndexGroupClicked] = useState(0);
 
   return (
     <StyledComponent>
       <SectionEachBet>
-        {dataBetGroupList.map((each, index) => {
+        {arrayMyBets?.map((each: any, index: any) => {
           return (
-            <SectionBetGroup
+            <SectionCashoutGroup
               key={index}
               data={each}
               index={index}
@@ -39,4 +39,4 @@ const SectionEachBet = styled(Box)`
   flex-direction: column;
 `;
 
-export default Home;
+export default MyBets;

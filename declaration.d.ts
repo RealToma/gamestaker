@@ -1,8 +1,10 @@
 declare module "styled-components";
 declare module "wagmi/providers/public";
 declare module "axios";
+declare module "ethereum";
 declare module "react-router-dom";
 declare module "@tanstack/react-query";
+declare module "papaparse";
 declare module "react-notifications" {
   import { ReactNode } from "react";
   import { EventEmitter } from "events";
