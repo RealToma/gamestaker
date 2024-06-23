@@ -2,16 +2,11 @@ import { Box, Collapse } from "@mui/material";
 import styled from "styled-components";
 import { RiLogoutBoxRLine, RiLogoutBoxLine } from "react-icons/ri";
 
-import { useContext, useRef, useState } from "react";
+import { useState } from "react";
 import { NotificationManager } from "react-notifications";
 import { PlaceBet } from "../../PlaceBet";
 import { useAccount } from "wagmi";
 import { ChainCode } from "../../web3/chainCode";
-import Papa from "papaparse";
-import { ethers } from "ethers";
-import { fakeApiResponse } from "../../data/dataAllBets";
-import { RefContext } from "../../hooks/RefContext";
-import { useNavigate } from "react-router-dom";
 // import { getGoogleSheetData } from "../../utils/functions";
 
 const SectionBetGroup = ({
@@ -22,8 +17,6 @@ const SectionBetGroup = ({
 }: any) => {
   const { isConnected, address } = useAccount();
   const [isProcess, setProcess] = useState(false);
-  const { setArrayMyBets }: any = useContext(RefContext);
-  const navigate = useNavigate();
 
   const handleClickDown = async () => {
     // const response = await fetch("/assets/csv/MChoiceStakerData.csv"); // Adjust the file path as per your project structure
@@ -55,8 +48,9 @@ const SectionBetGroup = ({
       // for (let stake of stakerContracts.values()) {
       //   console.log("received stake[%s]=%s", stake.name, stake.address);
       // }
-    } catch (error) {
+    } catch (error: any) {
       console.log("error of initContracts:", error);
+      NotificationManager.error(error.reason, "", 5000);
     }
   };
   const [selectedStake, setSelectedStake] = useState<string>("");
@@ -128,44 +122,10 @@ const SectionBetGroup = ({
       setTimeout(() => {
         NotificationManager.success("Completed successfully.", "", 5000);
       }, 1000);
-
-      const resGetStakes = await PlaceBet.handleGetStakes(address);
-      console.log("resGetMyBets:", resGetStakes);
-      if (resGetStakes.length === 0) {
-        NotificationManager.error(
-          "You don't have any bets. Please place a bet.",
-          "",
-          5000
-        );
-        navigate("/");
-        return;
-      }
-      let arrayMySubtitles = [];
-      let arrayMyBets = [];
-      for (let i = 0; i < resGetStakes.length; i++) {
-        let resDecodeBetId = ethers.decodeBytes32String(resGetStakes[i]);
-        for (let j = 0; j < fakeApiResponse.length; j++) {
-          for (let k = 0; k < fakeApiResponse[j].subtitles.length; k++) {
-            let betName = fakeApiResponse[0].subtitles[k].id;
-            if (betName === resDecodeBetId) {
-              arrayMySubtitles.push(fakeApiResponse[0].subtitles[k]);
-            }
-          }
-        }
-      }
-      for (let i = 0; i < fakeApiResponse.length; i++) {
-        const tempArrayMyBets = {
-          title: fakeApiResponse[i]?.title,
-          id: fakeApiResponse[i]?.id,
-          subtitles: arrayMySubtitles,
-        };
-        arrayMyBets.push(tempArrayMyBets);
-      }
-      console.log("my bets details:", arrayMyBets);
-      setArrayMyBets(arrayMyBets);
-    } catch (error) {
+    } catch (error: any) {
       setProcess(false);
       console.log("error of create stake:", error);
+      NotificationManager.error(error.reason, "", 5000);
     }
     //  finally {
     //   setProcess(false);

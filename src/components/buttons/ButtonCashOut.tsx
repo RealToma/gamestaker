@@ -1,14 +1,21 @@
 import { Box } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import styled from "styled-components";
 import { useAccount } from "wagmi";
 import { ChainCode } from "../../web3/chainCode";
 import { CashOutClass } from "../../CashOut";
+import { ethers } from "ethers";
+import { fakeApiResponse } from "../../data/dataAllBets";
+import { PlaceBet } from "../../PlaceBet";
+import { RefContext } from "../../hooks/RefContext";
+import { useNavigate } from "react-router-dom";
 
 const ButtonCashOut = ({ stakeID }: any) => {
   const [isProcess, setProcess] = useState(false);
   const { isConnected, address } = useAccount();
+  const { setArrayMyBets }: any = useContext(RefContext);
+  const navigate = useNavigate();
 
   const handleCashOut = async () => {
     console.log("stakeID:", stakeID);
@@ -38,6 +45,41 @@ const ButtonCashOut = ({ stakeID }: any) => {
       setTimeout(() => {
         NotificationManager.success("Completed successfully.", "", 5000);
       }, 1000);
+
+      const resGetStakes = await PlaceBet.handleGetStakes(address);
+      console.log("resGetMyBets:", resGetStakes);
+      if (resGetStakes.length === 0) {
+        NotificationManager.error(
+          "You don't have any bets. Please place a bet.",
+          "",
+          5000
+        );
+        navigate("/");
+        return;
+      }
+      let arrayMySubtitles = [];
+      let arrayMyBets = [];
+      for (let i = 0; i < resGetStakes.length; i++) {
+        let resDecodeBetId = ethers.decodeBytes32String(resGetStakes[i]);
+        for (let j = 0; j < fakeApiResponse.length; j++) {
+          for (let k = 0; k < fakeApiResponse[j].subtitles.length; k++) {
+            let betName = fakeApiResponse[0].subtitles[k].id;
+            if (betName === resDecodeBetId) {
+              arrayMySubtitles.push(fakeApiResponse[0].subtitles[k]);
+            }
+          }
+        }
+      }
+      for (let i = 0; i < fakeApiResponse.length; i++) {
+        const tempArrayMyBets = {
+          title: fakeApiResponse[i]?.title,
+          id: fakeApiResponse[i]?.id,
+          subtitles: arrayMySubtitles,
+        };
+        arrayMyBets.push(tempArrayMyBets);
+      }
+      console.log("my bets details:", arrayMyBets);
+      setArrayMyBets(arrayMyBets);
     } catch (error: any) {
       setProcess(false);
       // console.log(JSON.stringify(error));

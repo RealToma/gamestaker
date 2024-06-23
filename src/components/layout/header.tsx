@@ -28,15 +28,23 @@ const Header = () => {
       setDisconnectOpen(true);
     } else {
       setDisconnectOpen(false);
-      if (openConnectModal) {
-        openConnectModal();
-      }
+    }
+    if (openConnectModal) {
+      openConnectModal();
     }
   };
 
   const handleDisconnect = () => {
     setDisconnectOpen(false);
     disconnect();
+    NotificationManager.warning(
+      "The connection has been lost. Please connect your wallet.",
+      "",
+      3000
+    );
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   const handleOpenWorks = () => {
@@ -88,8 +96,9 @@ const Header = () => {
         top: 0,
         behavior: "smooth",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.log("error of handleMyBets:", error);
+      NotificationManager.error(error.reason, "", 5000);
     }
   };
 
