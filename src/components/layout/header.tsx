@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { PlaceBet } from "../../PlaceBet";
 import { ChainCode } from "../../web3/chainCode";
 import { ethers } from "ethers";
-import { fakeApiResponse } from "../../data/dataAllBets";
+import fakeApiResponse from "../../data/stakerConfig.json";
 import { RefContext } from "../../hooks/RefContext";
 
 const Header = () => {
@@ -73,19 +73,19 @@ const Header = () => {
       for (let i = 0; i < resGetStakes.length; i++) {
         let resDecodeBetId = ethers.decodeBytes32String(resGetStakes[i]);
         for (let j = 0; j < fakeApiResponse.length; j++) {
-          for (let k = 0; k < fakeApiResponse[j].subtitles.length; k++) {
-            let betName = fakeApiResponse[0].subtitles[k].id;
+          for (let k = 0; k < fakeApiResponse[j].GAMES.length; k++) {
+            let betName = fakeApiResponse[0].GAMES[k].name;
             if (betName === resDecodeBetId) {
-              arrayMySubtitles.push(fakeApiResponse[0].subtitles[k]);
+              arrayMySubtitles.push(fakeApiResponse[0].GAMES[k]);
             }
           }
         }
       }
+      console.log("arrayMySubtitles:", arrayMySubtitles);
       for (let i = 0; i < fakeApiResponse.length; i++) {
-        const tempArrayMyBets = {
-          title: fakeApiResponse[i]?.title,
-          id: fakeApiResponse[i]?.id,
-          subtitles: arrayMySubtitles,
+        const tempArrayMyBets: any = {
+          TOURNAMENT: fakeApiResponse[i]?.TOURNAMENT,
+          GAMES: arrayMySubtitles,
         };
         arrayMyBets.push(tempArrayMyBets);
       }

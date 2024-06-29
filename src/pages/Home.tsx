@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Box } from "@mui/material";
 import SectionBetGroup from "../components/sections/SectionBetGroup";
-import { fakeApiResponse } from "../data/dataAllBets";
+// import { fakeApiResponse } from "../data/dataAllBets";
+import dataBetInfo from "../data/stakerConfig.json";
 
 export default function SportsBet() {
   const [data, setData] = useState<Array<any>>([]);
@@ -19,7 +20,7 @@ export default function SportsBet() {
   useEffect(() => {
     const fetchReadBalance = async () => {
       // Read SC
-      const res = fakeApiResponse;
+      const res = dataBetInfo;
       callBackReadBalance(res);
     };
 
@@ -33,7 +34,7 @@ export default function SportsBet() {
   return (
     <StyledComponent>
       <SectionEachBet>
-        {data.map((each, index) => {
+        {data?.map((each, index) => {
           return (
             <SectionBetGroup
               key={index}

@@ -1,0 +1,69 @@
+{
+  "TOURNAMENT": "UEFA Euro 2024",
+  "GAMES": [
+    {
+      "name": "SwiIta240629",
+      "type": "MULTIPLE_CHOICE",
+      "Parties": ["Switzerland", "Italy"],
+      "Date": "29.06.2024",
+      "Time": "18:00",
+      "Timezone": "CEST"
+    },
+    {
+      "name": "GerDen240629",
+      "type": "MULTIPLE_CHOICE",
+      "Parties": ["Germany", "Denmark"],
+      "Date": "29.06.2024",
+      "Time": "21:00",
+      "Timezone": "CEST"
+    },
+    {
+      "name": "EngSlo240630",
+      "type": "MULTIPLE_CHOICE",
+      "Parties": ["England", "Slovakia"],
+      "Date": "30.06.2024",
+      "Time": "18:00",
+      "Timezone": "CEST"
+    },
+    {
+      "name": "EspGeo240630",
+      "type": "MULTIPLE_CHOICE",
+      "Parties": ["Spain", "Georgia"],
+      "Date": "30.06.2024",
+      "Time": "21:00",
+      "Timezone": "CEST"
+    },
+    {
+      "name": "FraBel240701",
+      "type": "SCORER",
+      "Parties": ["France", "Belgium"],
+      "Date": "01.07.2024",
+      "Time": "18:00",
+      "Timezone": "CEST"
+    },
+    {
+      "name": "PorSlo240701",
+      "type": "SCORER",
+      "Parties": ["Portugal", "Slovenia"],
+      "Date": "01.07.2024",
+      "Time": "21:00",
+      "Timezone": "CEST"
+    },
+    {
+      "name": "RomHol240702",
+      "type": "SCORER",
+      "Parties": ["Romania", "Netherlands"],
+      "Date": "02.07.2024",
+      "Time": "18:00",
+      "Timezone": "CEST"
+    },
+    {
+      "name": "AutTur240702",
+      "type": "SCORER",
+      "Parties": ["Austria", "Turkey"],
+      "Date": "02.07.2024",
+      "Time": "21:00",
+      "Timezone": "CEST"
+    }
+  ]
+}

@@ -33,17 +33,6 @@ export class PlaceBet {
     betAmount: any,
     bettingTokenType: any
   ) => {
-    if (selectedOption === null) {
-      alert("Please select an option.");
-      return;
-    }
-
-    const amount = parseInt(betAmount, 10);
-    if (isNaN(amount) || amount <= 0) {
-      alert("Please enter a valid bet amount.");
-      return;
-    }
-
     let stake = parseUnits(betAmount, 6);
     console.log(`Betting option Index: ${selectedOption}`);
     console.log(`Betting amount: ${stake}`);
@@ -93,10 +82,62 @@ export class PlaceBet {
     // );
   };
 
+  static handleExactScoreBet = async (
+    selectedStake: any,
+    score: any,
+    betAmount: any
+  ) => {
+    let stake = parseUnits(betAmount, 6);
+    const myUSDC = await ChainCode.usdcContract.getAddress();
+
+    console.log("calling usdcContract which is deployed to %s", myUSDC);
+
+    let contract = ChainCode.stakerContracts.get(selectedStake);
+    if (!(contract === undefined)) {
+      let allowance = await ChainCode.usdcContract.allowance(
+        ChainCode.signer.getAddress(),
+        contract.target
+      );
+
+      console.log("allowance:", allowance);
+
+      var tx: any;
+      if (parseInt(allowance) < stake) {
+        tx = await ChainCode.usdcContract.approve(contract.target, stake);
+        await tx.wait();
+      }
+
+      console.log(
+        "calling stakerContract which is deployed to %s",
+        contract.target
+      );
+      tx = await contract.predict_score(score, myUSDC, stake);
+      await tx.wait();
+    }
+  };
+
   static handleGetStakes = async (walletAddress: any) => {
     let resGetStakes = await ChainCode.stakeTreasuryContract.getStakes(
       walletAddress
     );
     return resGetStakes;
+  };
+
+  static handleGetRatio = async (selectedStake: any, score: any) => {
+    let contract = ChainCode.stakerContracts.get(selectedStake);
+
+    if (!(contract === undefined)) {
+      let resRatio = await contract.getRatio(score);
+      console.log("resRatio:", resRatio);
+      return resRatio;
+    }
+  };
+
+  static handleGetRatios = async (selectedStake: any) => {
+    let contract = ChainCode.stakerContracts.get(selectedStake);
+    if (!(contract === undefined)) {
+      let resRatio = await contract.getRatios();
+      return resRatio;
+    }
   };
 }

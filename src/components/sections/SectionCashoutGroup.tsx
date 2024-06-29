@@ -15,7 +15,7 @@ const SectionCashoutGroup = ({
 }: any) => {
   const navigate = useNavigate();
   const [clickedExit, setClickedExit] = useState(false);
-
+  console.log("data:", data);
   return (
     <>
       <StyledComponent>
@@ -32,16 +32,19 @@ const SectionCashoutGroup = ({
         </SectionBetHeader>
         <Collapse in={!clickedExit}>
           <SectionContent>
-            {data?.subtitles.map((each: any, index: any) => {
+            {data?.GAMES?.map((each: any, index: any) => {
+              const _index = index;
               return (
-                <SectionEachBet key={index}>
+                <SectionEachBet key={_index}>
                   <TextBetGroupName>
-                    {each.text}&nbsp;&nbsp;
+                    <span>
+                      {each?.Parties[0]} vs {each?.Parties[1]}&nbsp;&nbsp;
+                    </span>
                     <span style={{ color: "white" }}>
-                      {convertStakeDatefromID(each.id)}
+                      ( {each?.Date}&nbsp;{each?.Time}&nbsp;{each?.Timezone} )
                     </span>
                   </TextBetGroupName>
-                  <ButtonCashOut stakeID={each.id} />
+                  <ButtonCashOut stakeID={each.name} />
                 </SectionEachBet>
               );
             })}
@@ -158,6 +161,9 @@ const TextBetGroupName = styled(Box)`
   /* text-transform: uppercase; */
   color: #73da13;
   margin-bottom: 5px;
+  @media (max-width: 500px) {
+    flex-direction: column;
+  }
 `;
 
 const SectionBetHeader = styled(Box)`

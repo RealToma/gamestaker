@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
 import fs from "fs";
 
-import stakerContractJson from "./abis/SingleStake.sol/SingleStake.json";
+import stakerMultiChoiceContractJson from "./abis/SingleStake.sol/SingleStake.json";
+import stakerExactScoreContractJson from "./abis/ScoreStake.sol/ScoreStake.json";
 import usdcContractJson from "./abis/MyUSDC.sol/MyUSDC.json";
-import stakeTreasuryContractJson from "./abis/StakeTreasury.json";
+import stakeTreasuryContractJson from "./abis/StakeTreasury.sol/StakeTreasury.json";
 import configDataAmoy from "./deployAddresses.amoy.json";
 import configDataPolygon from "./deployAddresses.polygon.json";
 import { EventClassFactory } from "./eventSubscription";
@@ -19,6 +20,7 @@ export type stakerContract = {
   name: string;
   address: string; // 40-bit address of smart contract in Hex
   status: stakeStatus; // lifecycle status of stake
+  type: string;
 };
 
 export class ChainCode {
@@ -90,7 +92,9 @@ export class ChainCode {
         availableStake.name,
         new ethers.Contract(
           availableStake.address,
-          stakerContractJson.abi,
+          availableStake.type === "MULTIPLE_CHOICE"
+            ? stakerMultiChoiceContractJson.abi
+            : stakerExactScoreContractJson.abi,
           signer
         )
       );
