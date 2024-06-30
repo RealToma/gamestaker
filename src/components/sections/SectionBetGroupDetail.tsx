@@ -18,7 +18,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
   const [betScore2, setBetScore2] = useState<string>("");
   const [betExactScore, setExactScore]: any = useState([]);
   const [ratio, setRatio] = useState(1.0);
-  const [ratios, setRatios] = useState([
+  const [ratios, setRatiosMultiChoice] = useState([
     {
       id: "win",
       rate: 0,
@@ -33,6 +33,8 @@ const SectionBetGroupDetail = ({ data }: any) => {
     },
   ]);
 
+  const [ratiosExactScore, setRatioExactScore]: any = useState([]);
+
   const handleBetAmountChange = async (value: any, stake: any) => {
     // if (value === null || value === undefined || value === "") {
     //   setBetAmount(value);
@@ -45,28 +47,40 @@ const SectionBetGroupDetail = ({ data }: any) => {
     try {
       let resRatio = await PlaceBet.handleGetRatio(stake, score);
       const totalVolume = parseInt(formatUnits(resRatio[0], 6));
-      console.log("totalVolume:", totalVolume);
+      //   console.log("totalVolume:", totalVolume);
       const scoreVolume = parseInt(formatUnits(resRatio[1], 6));
-      console.log("scoreVolume:", scoreVolume);
+      //   console.log("scoreVolume:", scoreVolume);
 
-      console.log("betAmount:", parseFloat(value));
-
-      if (totalVolume === 0 || scoreVolume === 0) {
-        setRatio(1.0);
-      } else {
-        console.log(
-          "exact ratio:",
-          calculateRatio(totalVolume, scoreVolume, parseFloat(value))
-        );
-        setRatio(calculateRatio(totalVolume, scoreVolume, parseFloat(value)));
+      //   console.log("betAmount:", parseFloat(value));
+      if (value === undefined || value === null || value === "") {
+        let temp = totalVolume / scoreVolume;
+        console.log("temp:", temp);
+        if (temp !== temp || temp === Infinity) {
+          return setRatio(1);
+        }
       }
+
+      if (betAmount === undefined || betAmount === null || betAmount === "") {
+        return setRatio(1);
+      } else {
+        if (scoreVolume === 0) {
+          return setRatio(1);
+        } else {
+          setRatio(totalVolume / parseFloat(value));
+        }
+        if (totalVolume / parseFloat(value) === Infinity) {
+          return setRatio(1);
+        }
+      }
+
+      setRatio(calculateRatio(totalVolume, scoreVolume, parseFloat(value)));
     } catch (error) {
       console.log("error of getRatio:", error);
     }
   };
 
   const handleBetScore1Change = async (value: any, stake: any) => {
-    console.log("stake:", stake);
+    // console.log("stake:", stake);
     setBetScore1(value);
     setSelectedStake(stake);
     let score1 = 0;
@@ -84,19 +98,29 @@ const SectionBetGroupDetail = ({ data }: any) => {
     }
     let score = score1 * 10 + score2;
     setExactScore([score1, score2]);
-    console.log("score:", score);
+    // console.log("score:", score);
 
     try {
       let resRatio = await PlaceBet.handleGetRatio(stake, score);
       console.log("resRatio:", formatUnits(resRatio[0], 6));
       const totalVolume = parseInt(formatUnits(resRatio[0], 6));
-      console.log("totalVolume:", totalVolume);
       const scoreVolume = parseInt(formatUnits(resRatio[1], 6));
       console.log("scoreVolume:", scoreVolume);
-      console.log("betAmount:", parseFloat(betAmount));
+      if (value === null || value === undefined || value === "") {
+        return setRatio(1);
+      }
+      if (betAmount === undefined || betAmount === null || betAmount === "") {
+        return setRatio(totalVolume / scoreVolume);
+      }
 
-      if (totalVolume === 0 || scoreVolume === 0) {
-        setRatio(1.0);
+      if (scoreVolume === 0) {
+        if (betAmount === undefined || betAmount === null || betAmount === "") {
+          return setRatio(1);
+        }
+        if (totalVolume / parseFloat(betAmount) === Infinity) {
+          return setRatio(1);
+        }
+        setRatio(totalVolume / parseFloat(betAmount));
       } else {
         console.log(
           "exact ratio:",
@@ -129,7 +153,6 @@ const SectionBetGroupDetail = ({ data }: any) => {
     }
     let score = score1 * 10 + score2;
     setExactScore([score1, score2]);
-    console.log("score:", score);
 
     try {
       let resRatio = await PlaceBet.handleGetRatio(stake, score);
@@ -139,9 +162,20 @@ const SectionBetGroupDetail = ({ data }: any) => {
       const scoreVolume = parseInt(formatUnits(resRatio[1], 6));
       console.log("scoreVolume:", scoreVolume);
       console.log("betAmount:", parseFloat(betAmount));
-
-      if (totalVolume === 0 || scoreVolume === 0) {
-        setRatio(1.0);
+      if (value === null || value === undefined || value === "") {
+        return setRatio(1);
+      }
+      if (betAmount === undefined || betAmount === null || betAmount === "") {
+        return setRatio(totalVolume / scoreVolume);
+      }
+      if (scoreVolume === 0) {
+        if (betAmount === undefined || betAmount === null || betAmount === "") {
+          return setRatio(1);
+        }
+        if (totalVolume / parseFloat(betAmount) === Infinity) {
+          return setRatio(1);
+        }
+        setRatio(totalVolume / parseFloat(betAmount));
       } else {
         console.log(
           "exact ratio:",
@@ -221,7 +255,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
           },
         ];
 
-        setRatios(tempRatios);
+        setRatiosMultiChoice(tempRatios);
       } else {
         if (betAmount === "" || betAmount === undefined || betAmount === null) {
           return NotificationManager.warning(
@@ -301,16 +335,23 @@ const SectionBetGroupDetail = ({ data }: any) => {
     } else {
       amount = parseFloat(betAmount);
     }
+    if (volume === 0) {
+      return 1;
+    }
     const totalAmount = options.reduce((acc, option) => acc + option.rate, 0);
     const totalVolume = totalAmount + amount;
     const winnerOdds = totalVolume / (volume + amount);
+    console.log(`${data.name}-winnerOdds:`, winnerOdds);
     if (winnerOdds === Infinity) {
+      return 0;
+    }
+    if (winnerOdds !== winnerOdds) {
       return 0;
     }
     return winnerOdds;
   };
 
-  const getRatios = async (stake: any) => {
+  const getRatiosMultiChoice = async (stake: any) => {
     try {
       let resRatios = await PlaceBet.handleGetRatios(stake);
       let tempRatios: any = [
@@ -329,9 +370,30 @@ const SectionBetGroupDetail = ({ data }: any) => {
       ];
 
       console.log(`${data.name}-ratios:`, tempRatios);
-      setRatios(tempRatios);
+      setRatiosMultiChoice(tempRatios);
     } catch (error) {
-      console.log("error of getRatios for each stake:", error);
+      console.log("error of getRatiosMultiChoice for each stake:", error);
+    }
+  };
+
+  const getRatiosScore = async (stake: any) => {
+    try {
+      let resRatios = await PlaceBet.handleGetRatios(stake);
+
+      let tempArray = [];
+      for (let i = 0; i < resRatios.length; i++) {
+        const objectRatio = {
+          score: parseInt(resRatios[i]),
+          volume: parseInt(formatUnits(resRatios[i + 1], 6)),
+        };
+        tempArray.push(objectRatio);
+        i++;
+      }
+
+      setRatioExactScore(tempArray);
+      console.log(`${data.name}-exactscore:`, resRatios);
+    } catch (error) {
+      console.log("error of getRatiosMultiChoice for each stake:", error);
     }
   };
 
@@ -339,7 +401,9 @@ const SectionBetGroupDetail = ({ data }: any) => {
     if (ChainCode.stakerContracts) {
       if (data?.name !== null || data?.name !== undefined) {
         if (data?.type === "MULTIPLE_CHOICE") {
-          getRatios(data?.name);
+          getRatiosMultiChoice(data?.name);
+        } else {
+          getRatiosScore(data?.name);
         }
       }
     }

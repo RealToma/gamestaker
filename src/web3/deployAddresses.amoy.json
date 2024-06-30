@@ -5,58 +5,58 @@
   "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22",
   "STAKER_ADDRESSES": [
     {
-      "name": "SwiIta240629",
-      "type": "MULTIPLE_CHOICE",
-      "address": "0x3a354b131de690386a34B5C04b76cB55f7688142",
-      "status": "INIT",
-      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
-    },
-    {
-      "name": "GerDen240629",
-      "type": "MULTIPLE_CHOICE",
-      "address": "0xe54d0866DFE3C2234862bD2CC264005B691EAbc0",
-      "status": "INIT",
-      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
-    },
-    {
-      "name": "EngSlo240630",
-      "type": "MULTIPLE_CHOICE",
-      "address": "0x876bE34f43aC8E26cAF67249b8beEB04c4cDfB65",
-      "status": "INIT",
-      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
-    },
-    {
-      "name": "EspGeo240630",
-      "type": "MULTIPLE_CHOICE",
-      "address": "0x8136EADa08a80763062691547E1e92Ce6c6eC4CE",
-      "status": "INIT",
-      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
-    },
-    {
       "name": "FraBel240701",
       "type": "SCORER",
-      "address": "0xACab4ac4Df895af12AE85fA55f997b2F54769b21",
+      "address": "0xc9A9478f2eC5198BD5c3a91E6644C2F2e38EDd58",
       "status": "INIT",
       "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
     },
     {
       "name": "PorSlo240701",
       "type": "SCORER",
-      "address": "0x422cC4eD38b79a60306fCF2E61889b4dF40f3911",
+      "address": "0xf6650184ccb90315AF342C3434Ea9798D4566D5F",
       "status": "INIT",
       "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
     },
     {
       "name": "RomHol240702",
       "type": "SCORER",
-      "address": "0xFF717B8FC9c82d44D677f9fDFe584D8A6D0d10A1",
+      "address": "0x6F055EDA9245cf2908bF1048b9a4126C75999FB5",
       "status": "INIT",
       "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
     },
     {
       "name": "AutTur240702",
       "type": "SCORER",
-      "address": "0x44Ad7CD769ad2913F538c63d9AE59C60723D00b7",
+      "address": "0x0dDA4A9E8770FAfceBA48c1ecDD8e56D8c23b95f",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
+    },
+    {
+      "name": "GerDen240629",
+      "type": "MULTIPLE_CHOICE",
+      "address": "0x68CaA855CA2136A454B873D1f477D192Bc872CC8",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
+    },
+    {
+      "name": "EngSlo240630",
+      "type": "MULTIPLE_CHOICE",
+      "address": "0x8DBF3Da2744c08a8CF76be352d594C7D1E3B8D90",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
+    },
+    {
+      "name": "EspGeo240630",
+      "type": "MULTIPLE_CHOICE",
+      "address": "0x1c03577e98768205f6d651eca91E3e6D4C343255",
+      "status": "INIT",
+      "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
+    },
+    {
+      "name": "SwiIta240629",
+      "type": "MULTIPLE_CHOICE",
+      "address": "0x0f22B0752C8EA845AAA29F763b94dE03Be20E49a",
       "status": "INIT",
       "MANAGER_LIB_ADDRESS": "0xEa000B1Cc97bB5Ec93837a450bB0AB937c1eFb22"
     }
