@@ -48,6 +48,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
       console.log("totalVolume:", totalVolume);
       const scoreVolume = parseInt(formatUnits(resRatio[1], 6));
       console.log("scoreVolume:", scoreVolume);
+
       console.log("betAmount:", parseFloat(value));
 
       if (totalVolume === 0 || scoreVolume === 0) {
@@ -281,7 +282,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
     return (totalVolume + inputAmount) / (scoreVolume + inputAmount);
   };
 
-  const calculateOdds = (options: any[], amount: any) => {
+  const calculateOdds = (options: any[], volume: any, betAmount: any) => {
     // winner_rate = (amount_1 + amount_2)*(1-fee)/amount_3
     // let tempAmount: any;
     // if (amount === null || amount === undefined || amount === "") {
@@ -291,20 +292,27 @@ const SectionBetGroupDetail = ({ data }: any) => {
     // }
 
     // const fee = parseFloat(process.env.REACT_APP_FEE || "0");
-    if (amount <= 0) {
-      return 1;
+    // if (parseFloat(volume) <= 0) {
+    //   return 0;
+    // }
+    let amount;
+    if (betAmount === undefined || betAmount === null || betAmount === "") {
+      amount = 0;
+    } else {
+      amount = parseFloat(betAmount);
     }
     const totalAmount = options.reduce((acc, option) => acc + option.rate, 0);
-    const totalVolume = totalAmount + parseFloat(amount);
-
-    const winnerOdds = totalVolume / parseFloat(amount);
+    const totalVolume = totalAmount + amount;
+    const winnerOdds = totalVolume / (volume + amount);
+    if (winnerOdds === Infinity) {
+      return 0;
+    }
     return winnerOdds;
   };
 
   const getRatios = async (stake: any) => {
     try {
       let resRatios = await PlaceBet.handleGetRatios(stake);
-      //   console.log("resRatios:", resRatios);
       let tempRatios: any = [
         {
           id: "win",
@@ -320,7 +328,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
         },
       ];
 
-      //   console.log("tempRatios:", tempRatios);
+      console.log(`${data.name}-ratios:`, tempRatios);
       setRatios(tempRatios);
     } catch (error) {
       console.log("error of getRatios for each stake:", error);
@@ -375,10 +383,9 @@ const SectionBetGroupDetail = ({ data }: any) => {
                     } border-secondary border-[12px] mt-1`}
                   >
                     {ratios &&
-                      calculateOdds(
-                        ratios,
-                        ratios[0]?.rate + betAmount
-                      ).toFixed(2)}
+                      calculateOdds(ratios, ratios[0]?.rate, betAmount).toFixed(
+                        2
+                      )}
                   </div>
                 </SectionEachOptionGroup>
                 <SectionEachOptionGroup>
@@ -404,7 +411,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
                     } border-secondary border-[12px] mt-1`}
                   >
                     {ratios &&
-                      calculateOdds(ratios, ratios[1].rate + betAmount).toFixed(
+                      calculateOdds(ratios, ratios[1].rate, betAmount).toFixed(
                         2
                       )}
                   </div>
@@ -432,7 +439,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
                     } border-secondary border-[12px] mt-1`}
                   >
                     {ratios &&
-                      calculateOdds(ratios, ratios[2].rate + betAmount).toFixed(
+                      calculateOdds(ratios, ratios[2].rate, betAmount).toFixed(
                         2
                       )}
                   </div>
