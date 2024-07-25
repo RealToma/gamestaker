@@ -12,11 +12,8 @@ import fakeApiResponse from "../../data/stakerConfig.json";
 import { RefContext } from "../../hooks/RefContext";
 
 const Header = () => {
-  const { sdk, connected, account } = useSDK();
+  const { sdk, connected, account, connecting } = useSDK();
 
-  useEffect(() => {
-    console.log("connected:", connected);
-  }, [connected]);
   const connect = async () => {
     try {
       if (connected) {
@@ -168,7 +165,9 @@ const Header = () => {
       </ButtonHowItWorks>
       <SectionButtonGroup>
         <ButtonConnect onClick={connect}>
-          {connected
+          {connecting
+            ? "Connecting..."
+            : connected
             ? `${account?.slice(0, 6)}...${account?.slice(account.length - 4)}`
             : "Connect wallet"}
 
