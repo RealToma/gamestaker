@@ -43,7 +43,8 @@ export class PlaceBet {
       return;
     }
 
-    let stake = parseUnits(betAmount, 6);
+    let decimals = await ChainCode.usdcContract.decimals();
+    let stake = parseUnits(betAmount, Number(decimals));
     console.log(`Betting option Index: ${selectedOption}`);
     console.log(`Betting amount: ${stake}`);
     console.log(`Token Type: ${bettingTokenType}`);

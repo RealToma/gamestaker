@@ -6,9 +6,10 @@ import { PlaceBet } from "../../PlaceBet";
 import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
 import { ChainCode } from "../../web3/chainCode";
+import { useSDK } from "@metamask/sdk-react";
 
 const SectionBetGroupDetail = ({ data }: any) => {
-  const { isConnected, address } = useAccount();
+  const { connected, account } = useSDK();
   const [typeMultiChoice, setTypeMultiChoice] = useState(-1);
   const [selectedStake, setSelectedStake] = useState<string>("");
   const [isProcess, setProcess] = useState(false);
@@ -44,14 +45,16 @@ const SectionBetGroupDetail = ({ data }: any) => {
     setBetAmount(value);
     let score = parseInt(betScore1) * 10 + parseInt(betScore2);
 
+    let decimals: number = Number(await ChainCode.usdcContract.decimals());
+
     try {
       let resRatio = await PlaceBet.handleGetRatio(stake, score);
-      const totalVolume = parseInt(formatUnits(resRatio[0], 6));
-      //   console.log("totalVolume:", totalVolume);
-      const scoreVolume = parseInt(formatUnits(resRatio[1], 6));
-      //   console.log("scoreVolume:", scoreVolume);
+      const totalVolume = parseInt(formatUnits(resRatio[0], Number(decimals)));
+      console.log("totalVolume:", totalVolume);
+      const scoreVolume = parseInt(formatUnits(resRatio[1], Number(decimals)));
+      console.log("handleBetAmountChange scoreVolume:", scoreVolume);
 
-      //   console.log("betAmount:", parseFloat(value));
+      console.log("betAmount:", parseFloat(value));
       if (value === undefined || value === null || value === "") {
         let temp = totalVolume / scoreVolume;
         console.log("temp:", temp);
@@ -63,7 +66,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
       if (betAmount === undefined || betAmount === null || betAmount === "") {
         return setRatio(1);
       } else {
-        if (scoreVolume === 0) {
+        if (scoreVolume === 0 && value == 0) {
           return setRatio(1);
         } else {
           setRatio(totalVolume / parseFloat(value));
@@ -80,7 +83,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
   };
 
   const handleBetScore1Change = async (value: any, stake: any) => {
-    // console.log("stake:", stake);
+    console.log("handleBetScore1Change stake: %s value = %s", stake, value);
     setBetScore1(value);
     setSelectedStake(stake);
     let score1 = 0;
@@ -100,12 +103,13 @@ const SectionBetGroupDetail = ({ data }: any) => {
     setExactScore([score1, score2]);
     // console.log("score:", score);
 
+    let decimals = await ChainCode.usdcContract.decimals();
     try {
       let resRatio = await PlaceBet.handleGetRatio(stake, score);
-      console.log("resRatio:", formatUnits(resRatio[0], 6));
-      const totalVolume = parseInt(formatUnits(resRatio[0], 6));
-      const scoreVolume = parseInt(formatUnits(resRatio[1], 6));
-      console.log("scoreVolume:", scoreVolume);
+      console.log("resRatio:", formatUnits(resRatio[0], Number(decimals)));
+      const totalVolume = parseInt(formatUnits(resRatio[0], Number(decimals)));
+      const scoreVolume = parseInt(formatUnits(resRatio[1], Number(decimals)));
+      console.log("handleBetScore1Change scoreVolume:", scoreVolume);
       if (value === null || value === undefined || value === "") {
         return setRatio(1);
       }
@@ -154,13 +158,14 @@ const SectionBetGroupDetail = ({ data }: any) => {
     let score = score1 * 10 + score2;
     setExactScore([score1, score2]);
 
+    let decimals = await ChainCode.usdcContract.decimals();
     try {
       let resRatio = await PlaceBet.handleGetRatio(stake, score);
-      console.log("resRatio:", formatUnits(resRatio[0], 6));
-      const totalVolume = parseInt(formatUnits(resRatio[0], 6));
+      console.log("resRatio:", formatUnits(resRatio[0], Number(decimals)));
+      const totalVolume = parseInt(formatUnits(resRatio[0], Number(decimals)));
       console.log("totalVolume:", totalVolume);
-      const scoreVolume = parseInt(formatUnits(resRatio[1], 6));
-      console.log("scoreVolume:", scoreVolume);
+      const scoreVolume = parseInt(formatUnits(resRatio[1], Number(decimals)));
+      console.log("handleBetScore2Change scoreVolume:", scoreVolume);
       console.log("betAmount:", parseFloat(betAmount));
       if (value === null || value === undefined || value === "") {
         return setRatio(1);
@@ -220,7 +225,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
           // alert("Please enter a valid bet amount.");
           return;
         }
-        if (!isConnected || !address) {
+        if (!connected) {
           return NotificationManager.warning("Connect your wallet.", "", 3000);
         }
         setProcess(true);
@@ -240,18 +245,19 @@ const SectionBetGroupDetail = ({ data }: any) => {
         );
 
         let resRatios = await PlaceBet.handleGetRatios(stake);
+        let decimals = await ChainCode.usdcContract.decimals();
         let tempRatios: any = [
           {
             id: "win",
-            rate: parseInt(formatUnits(resRatios[1], 6)),
+            rate: parseInt(formatUnits(resRatios[1], Number(decimals))),
           },
           {
             id: "tie",
-            rate: parseInt(formatUnits(resRatios[3], 6)),
+            rate: parseInt(formatUnits(resRatios[3], Number(decimals))),
           },
           {
             id: "lose",
-            rate: parseInt(formatUnits(resRatios[5], 6)),
+            rate: parseInt(formatUnits(resRatios[5], Number(decimals))),
           },
         ];
 
@@ -274,7 +280,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
           // alert("Please enter a valid bet amount.");
           return;
         }
-        if (!isConnected || !address) {
+        if (!connected || !account) {
           return NotificationManager.warning("Connect your wallet.", "", 3000);
         }
         setProcess(true);
@@ -335,7 +341,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
     } else {
       amount = parseFloat(betAmount);
     }
-    if (volume === 0) {
+    if (volume === 0 && amount === 0) {
       return 1;
     }
     const totalAmount = options.reduce((acc, option) => acc + option.rate, 0);
@@ -352,20 +358,21 @@ const SectionBetGroupDetail = ({ data }: any) => {
   };
 
   const getRatiosMultiChoice = async (stake: any) => {
+    let decimals = await ChainCode.usdcContract.decimals();
     try {
       let resRatios = await PlaceBet.handleGetRatios(stake);
       let tempRatios: any = [
         {
           id: "win",
-          rate: parseInt(formatUnits(resRatios[1], 6)),
+          rate: parseInt(formatUnits(resRatios[1], Number(decimals))),
         },
         {
           id: "tie",
-          rate: parseInt(formatUnits(resRatios[3], 6)),
+          rate: parseInt(formatUnits(resRatios[3], Number(decimals))),
         },
         {
           id: "lose",
-          rate: parseInt(formatUnits(resRatios[5], 6)),
+          rate: parseInt(formatUnits(resRatios[5], Number(decimals))),
         },
       ];
 
@@ -381,10 +388,11 @@ const SectionBetGroupDetail = ({ data }: any) => {
       let resRatios = await PlaceBet.handleGetRatios(stake);
 
       let tempArray = [];
+      let decimals = await ChainCode.usdcContract.decimals();
       for (let i = 0; i < resRatios.length; i++) {
         const objectRatio = {
           score: parseInt(resRatios[i]),
-          volume: parseInt(formatUnits(resRatios[i + 1], 6)),
+          volume: parseInt(formatUnits(resRatios[i + 1], Number(decimals))),
         };
         tempArray.push(objectRatio);
         i++;

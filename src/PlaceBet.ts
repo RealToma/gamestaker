@@ -2,14 +2,31 @@ import { parseUnits } from "ethers";
 import { ChainCode } from "./web3/chainCode";
 
 export class PlaceBet {
-  /*
-   ** sc_read ()**
-   *
-   * Fetching options data from the '/sc_read' API on component mount
-   * returns balance of different option pools
-   * This is where the API integration for '/sc_read' occurs
-   */
 
+  static getOptionInfo(stakeInfo : any, option: any) : string {
+
+   let _option : number = Number(option);
+   console.log("option is %s", _option);
+   let test = 3;
+   if(stakeInfo.type == "MULTIPLE_CHOICE") {
+    switch(_option) {
+      case 0:
+        return(stakeInfo.Parties[0]);
+        break;
+      case 1:
+        return "TIE";
+        break;
+      case 2:
+        return(stakeInfo.Parties[1]);
+        break;
+    }
+   } else if (stakeInfo.type == "SCORER") {
+      let _first : string = String(Math.floor(Number(_option) / 10));
+      let _second : string = String(Number(_option) % 10);
+      return(_first.concat(":").concat(_second));
+    }
+    return "";
+  }
   static calculateOdds = (options: any[], amount: number) => {
     // winner_rate = (amount_1 + amount_2)*(1-fee)/amount_3
     const fee = parseFloat(process.env.REACT_APP_FEE || "0");
@@ -33,7 +50,8 @@ export class PlaceBet {
     betAmount: any,
     bettingTokenType: any
   ) => {
-    let stake = parseUnits(betAmount, 6);
+    let decimals = await ChainCode.usdcContract.decimals();
+    let stake = parseUnits(betAmount, Number(decimals));
     console.log(`Betting option Index: ${selectedOption}`);
     console.log(`Betting amount: ${stake}`);
     console.log(`Token Type: ${bettingTokenType}`);
@@ -52,16 +70,6 @@ export class PlaceBet {
       console.log("allowance:", allowance);
 
       var tx: any;
-      // if (allowance >= stake) {
-      //   return NotificationManager.warning(
-      //     `Bet amount should be less than allowance(${parseUnits(
-      //       allowance,
-      //       6
-      //     )}USDC).`,
-      //     "",
-      //     5000
-      //   );
-      // }
       if (parseInt(allowance) < stake) {
         tx = await ChainCode.usdcContract.approve(contract.target, stake);
         await tx.wait();
@@ -87,7 +95,8 @@ export class PlaceBet {
     score: any,
     betAmount: any
   ) => {
-    let stake = parseUnits(betAmount, 6);
+    let decimals = await ChainCode.usdcContract.decimals();
+    let stake = parseUnits(betAmount, Number(decimals));
     const myUSDC = await ChainCode.usdcContract.getAddress();
 
     console.log("calling usdcContract which is deployed to %s", myUSDC);

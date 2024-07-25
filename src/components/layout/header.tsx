@@ -1,8 +1,7 @@
+import { useSDK } from "@metamask/sdk-react";
 import { Box } from "@mui/material";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useAccount, useDisconnect } from "wagmi";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { NotificationManager } from "react-notifications";
 import { useOutsideDetector } from "../../hooks/useOutsideDetector";
 import { useNavigate } from "react-router-dom";
@@ -13,30 +12,47 @@ import fakeApiResponse from "../../data/stakerConfig.json";
 import { RefContext } from "../../hooks/RefContext";
 
 const Header = () => {
-  const { isConnected, address } = useAccount();
-  const { disconnect } = useDisconnect();
+  const { sdk, connected, account } = useSDK();
+
+  useEffect(() => {
+    console.log("connected:", connected);
+  }, [connected]);
+  const connect = async () => {
+    try {
+      if (connected) {
+        setDisconnectOpen(true);
+      } else {
+        setDisconnectOpen(false);
+      }
+      await sdk?.connect();
+    } catch (error) {
+      console.warn(`failed to connect..`, error);
+      // NotificationManager.error(error.reason, "", 5000);
+    }
+  };
+
   const [disconnectOpen, setDisconnectOpen] = useState(false);
-  const { openConnectModal } = useConnectModal();
   const { setArrayMyBets }: any = useContext(RefContext);
   const navigate = useNavigate();
 
   const refConnectDown = useRef(0);
   useOutsideDetector([refConnectDown], () => setDisconnectOpen(false));
 
-  const connectWallet = () => {
-    if (isConnected) {
-      setDisconnectOpen(true);
-    } else {
-      setDisconnectOpen(false);
-    }
-    if (openConnectModal) {
-      openConnectModal();
-    }
-  };
+  // const connectWallet = () => {
+  //   if (isConnected) {
+  //     setDisconnectOpen(true);
+  //   } else {
+  //     setDisconnectOpen(false);
+  //   }
+  //   if (openConnectModal) {
+  //     // openConnectModal();
+  //   }
+  // };
 
   const handleDisconnect = () => {
     setDisconnectOpen(false);
-    disconnect();
+    // disconnect();
+    sdk?.terminate();
     NotificationManager.warning(
       "The connection has been lost. Please connect your wallet.",
       "",
@@ -54,12 +70,12 @@ const Header = () => {
 
   const handleMyBets = async () => {
     try {
-      if (!isConnected || !address) {
+      if (!connected) {
         return NotificationManager.warning("Connect your wallet.", "", 3000);
       }
       await ChainCode.initWallet();
       await ChainCode.initContracts(ChainCode.signer);
-      const resGetStakes = await PlaceBet.handleGetStakes(address);
+      const resGetStakes = await PlaceBet.handleGetStakes(account);
       console.log("resGetMyBets:", resGetStakes);
       if (resGetStakes.length === 0) {
         return NotificationManager.error(
@@ -70,6 +86,37 @@ const Header = () => {
       }
       let arrayMySubtitles = [];
       let arrayMyBets = [];
+
+      for (let i = 0; i < resGetStakes.length; i++) {
+        let stake = resGetStakes[i];
+        let resDecodeBetId = ethers.decodeBytes32String(stake);
+        let stakeInfo = ChainCode.getStakeInfo(resDecodeBetId);
+        let contract: any = ChainCode.stakerContracts.get(resDecodeBetId);
+        console.log("contract[%s] is %s", resDecodeBetId, contract.target);
+        let stakesByContract = await contract.getStakes(account);
+        console.log(
+          "for stake[%s] %s is game [%s : %s]",
+          stakeInfo.type,
+          resDecodeBetId,
+          stakeInfo.Parties[0],
+          stakeInfo.Parties[1]
+        );
+        for (let m = 0; m < stakesByContract.length; m++) {
+          let _stakeInfo = JSON.parse(JSON.stringify(stakeInfo));
+          // let option = PlaceBet.getOption(fakeApiResponse[0].GAMES[i].type, stakesByContract[ii]);
+          _stakeInfo["option"] = PlaceBet.getOptionInfo(
+            stakeInfo,
+            Number(stakesByContract[m])
+          );
+          console.log(
+            "found option %s is %s",
+            stakesByContract[m],
+            _stakeInfo["option"]
+          );
+          arrayMySubtitles.push(_stakeInfo);
+        }
+      }
+      /*
       for (let i = 0; i < resGetStakes.length; i++) {
         let resDecodeBetId = ethers.decodeBytes32String(resGetStakes[i]);
         for (let j = 0; j < fakeApiResponse.length; j++) {
@@ -81,6 +128,7 @@ const Header = () => {
           }
         }
       }
+*/
       console.log("arrayMySubtitles:", arrayMySubtitles);
       for (let i = 0; i < fakeApiResponse.length; i++) {
         const tempArrayMyBets: any = {
@@ -119,12 +167,12 @@ const Header = () => {
         HOW IT WORKS
       </ButtonHowItWorks>
       <SectionButtonGroup>
-        <ButtonConnect onClick={connectWallet}>
-          {isConnected
-            ? `${address?.slice(0, 6)}...${address?.slice(address.length - 4)}`
+        <ButtonConnect onClick={connect}>
+          {connected
+            ? `${account?.slice(0, 6)}...${account?.slice(account.length - 4)}`
             : "Connect wallet"}
 
-          {disconnectOpen && isConnected ? (
+          {disconnectOpen && connected ? (
             <ButtonDisconnect onClick={handleDisconnect} ref={refConnectDown}>
               Disconnect
             </ButtonDisconnect>
@@ -132,7 +180,7 @@ const Header = () => {
             <></>
           )}
         </ButtonConnect>
-        {isConnected ? (
+        {connected ? (
           <ButtonMyBets onClick={handleMyBets}>My Bets</ButtonMyBets>
         ) : (
           <></>

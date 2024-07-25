@@ -6,6 +6,7 @@ import { NotificationManager } from "react-notifications";
 import { useAccount } from "wagmi";
 import { ChainCode } from "../../web3/chainCode";
 import SectionBetGroupDetail from "./SectionBetGroupDetail";
+import { useSDK } from "@metamask/sdk-react";
 // import { getGoogleSheetData } from "../../utils/functions";
 
 const SectionBetGroup = ({
@@ -14,10 +15,10 @@ const SectionBetGroup = ({
   indexGroupClicked,
   setIndexGroupClicked,
 }: any) => {
-  const { isConnected, address } = useAccount();
+  const { connected } = useSDK();
 
   const handleClickDown = async () => {
-    if (!isConnected || !address) {
+    if (!connected ) {
       return NotificationManager.warning("Connect your wallet.", "", 3000);
     }
     try {

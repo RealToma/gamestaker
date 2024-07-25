@@ -2,7 +2,6 @@ import { Box } from "@mui/material";
 import { useContext, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import styled from "styled-components";
-import { useAccount } from "wagmi";
 import { ChainCode } from "../../web3/chainCode";
 import { CashOutClass } from "../../CashOut";
 import { ethers } from "ethers";
@@ -10,17 +9,18 @@ import fakeApiResponse from "../../data/stakerConfig.json";
 import { PlaceBet } from "../../PlaceBet";
 import { RefContext } from "../../hooks/RefContext";
 import { useNavigate } from "react-router-dom";
+import { useSDK } from "@metamask/sdk-react";
 
 const ButtonCashOut = ({ stakeID }: any) => {
   const [isProcess, setProcess] = useState(false);
-  const { isConnected, address } = useAccount();
+  const { connected, account } = useSDK();
   const { setArrayMyBets }: any = useContext(RefContext);
   const navigate = useNavigate();
 
   const handleCashOut = async () => {
     console.log("stakeID:", stakeID);
 
-    if (!isConnected || !address) {
+    if (!connected) {
       return NotificationManager.warning("Connect your wallet.", "", 3000);
     }
     setProcess(true);
@@ -46,7 +46,7 @@ const ButtonCashOut = ({ stakeID }: any) => {
         NotificationManager.success("Completed successfully.", "", 5000);
       }, 1000);
 
-      const resGetStakes = await PlaceBet.handleGetStakes(address);
+      const resGetStakes = await PlaceBet.handleGetStakes(account);
       console.log("resGetMyBets:", resGetStakes);
       if (resGetStakes.length === 0) {
         NotificationManager.error(

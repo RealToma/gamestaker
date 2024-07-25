@@ -7,6 +7,7 @@ import usdcContractJson from "./abis/MyUSDC.sol/MyUSDC.json";
 import stakeTreasuryContractJson from "./abis/StakeTreasury.sol/StakeTreasury.json";
 import configDataAmoy from "./deployAddresses.amoy.json";
 import configDataPolygon from "./deployAddresses.polygon.json";
+import fakeApiResponse from "../data/stakerConfig.json";
 import { EventClassFactory } from "./eventSubscription";
 import * as Events from "./events.types";
 
@@ -32,13 +33,36 @@ export class ChainCode {
   public static web3provider: ethers.BrowserProvider;
   public static stakes: string[];
 
+  static getStakeInfo(stake: any): any {
+    let ret;
+    let j = 0;
+    for (j = 0; j < fakeApiResponse.length; j++) {
+      for (let k = 0; k < fakeApiResponse[j].GAMES.length; k++) {
+        let betName = fakeApiResponse[0].GAMES[k].name;
+        // console.log("getStakeInfo: comparing %s to %s", betName, stake);
+        if (betName === stake) {
+          return fakeApiResponse[0].GAMES[k];
+        }
+      }
+    }
+    return ret;
+  }
+
   static async initWallet(): Promise<string[]> {
     ChainCode.stakerContracts = new Map<string, ethers.Contract>();
-    ChainCode.web3provider = new ethers.BrowserProvider(window.ethereum);
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-    const accounts = await window.ethereum.request({
-      method: "eth_accounts",
-    });
+    ChainCode.web3provider = new ethers.BrowserProvider(
+      window?.ethereum as any
+    );
+    let accounts: any;
+    if (window.ethereum) {
+      await window?.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      accounts = await window?.ethereum.request({
+        method: "eth_accounts",
+      });
+    }
+
     // TODO Thomas - if you don't want to call initWallet() you DO need to set ChainCode.signer to the signer (this is an ethers.js type)
     ChainCode.signer = await ChainCode.web3provider.getSigner(accounts[0]);
     return Promise.resolve(accounts);

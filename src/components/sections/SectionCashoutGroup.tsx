@@ -38,11 +38,9 @@ const SectionCashoutGroup = ({
                 <SectionEachBet key={_index}>
                   <TextBetGroupName>
                     <span>
-                      {each?.Parties[0]} vs {each?.Parties[1]}&nbsp;&nbsp;
+                      {each?.Parties[0]} vs {each?.Parties[1]}  &nbsp;&nbsp;
                     </span>
-                    <span style={{ color: "white" }}>
-                      ( {each?.Date}&nbsp;{each?.Time}&nbsp;{each?.Timezone} )
-                    </span>
+                    <span style={ {color: "white"}}>&nbsp;[{each?.option}]&nbsp;</span>
                   </TextBetGroupName>
                   <ButtonCashOut stakeID={each.name} />
                 </SectionEachBet>

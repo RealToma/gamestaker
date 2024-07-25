@@ -3,31 +3,31 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { http, WagmiProvider } from "wagmi";
-import { polygon, polygonAmoy } from "wagmi/chains";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MetaMaskProvider } from "@metamask/sdk-react";
+import RefContextProvider from "./hooks/RefContext";
+// import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+// import { http, WagmiProvider } from "wagmi";
+// import { polygon, polygonAmoy } from "wagmi/chains";
+// import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@rainbow-me/rainbowkit/styles.css";
 
 // Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
 // Bootstrap Bundle JS
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import RefContextProvider from "./hooks/RefContext";
 
 const isTestnet: any = true;
-const config = getDefaultConfig({
-  appName: "GameStaker",
-  projectId: "c9bfdfeba6902d82c74c3c748bcd073e",
-  chains: [!isTestnet ? polygon : polygonAmoy],
-  transports: {
-    [polygon.id]: http(),
-    [polygonAmoy.id]: http(),
-  },
-});
+// const config = getDefaultConfig({
+//   appName: "GameStaker",
+//   projectId: "c9bfdfeba6902d82c74c3c748bcd073e",
+//   chains: [!isTestnet ? polygon : polygonAmoy],
+//   transports: {
+//     [polygon.id]: http(),
+//     [polygonAmoy.id]: http(),
+//   },
+// });
 
-const queryClient = new QueryClient();
+// const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -35,15 +35,33 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <WagmiProvider config={config}>
+    {/* <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>
-          <RefContextProvider>
-            <App />
-          </RefContextProvider>
-        </RainbowKitProvider>
+        <RainbowKitProvider> */}
+    <MetaMaskProvider
+      debug={false}
+      sdkOptions={{
+        logging: {
+          developerMode: false,
+        },
+        communicationServerUrl: "https://metamask-sdk.api.cx.metamask.io/",
+        checkInstallationImmediately: false, // This will automatically connect to MetaMask on page load
+        i18nOptions: {
+          enabled: true,
+        },
+        dappMetadata: {
+          name: "gamestaker",
+          url: window.location.protocol + "//" + window.location.host,
+        },
+      }}
+    >
+      <RefContextProvider>
+        <App />
+      </RefContextProvider>
+    </MetaMaskProvider>
+    {/* </RainbowKitProvider>
       </QueryClientProvider>
-    </WagmiProvider>
+    </WagmiProvider> */}
   </React.StrictMode>
 );
 
