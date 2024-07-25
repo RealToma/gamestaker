@@ -22,9 +22,53 @@ const Header = () => {
         setDisconnectOpen(false);
       }
       await sdk?.connect();
+      checkNetwork();
     } catch (error) {
       console.warn(`failed to connect..`, error);
       // NotificationManager.error(error.reason, "", 5000);
+    }
+  };
+
+  const checkNetwork = async () => {
+    const chainId: any = '0x13822'; //mainnet = 0x89   testnet = 0x13822
+    if ((window.ethereum as any).networkVersion !== chainId) {
+      try {
+        // check if the chain to connect to is installed
+        await (window.ethereum as any).request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId:chainId }], // chainId must be in hexadecimal numbers
+        });
+      } catch (error: any) {
+        // This error code indicates that the chain has not been added to MetaMask
+        // if it is not, then install it into the user MetaMask
+        if (error.code === 4902) {
+          try {
+            await (window.ethereum as any).request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainName: "Polygon Amoy", // 'Polygon'
+                  chainId: chainId,
+                  nativeCurrency: {
+                    name: "MATIC",
+                    decimals: 18,
+                    symbol: "MATIC",
+                  },
+                  rpcUrl: "https://polygon-amoy-bor-rpc.publicnode.com", // https://polygon-rpc.com
+                },
+              ],
+            });
+          } catch (addError) {
+            console.error(addError);
+          }
+        }
+        console.error(error);
+      }
+    } else {
+      // if no window.ethereum then MetaMask is not installed
+      NotificationManager.warning(
+        "MetaMask is not installed. Please consider installing it: https://metamask.io/download.html"
+      );
     }
   };
 
