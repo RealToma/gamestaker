@@ -22,7 +22,7 @@ const Header = () => {
         setDisconnectOpen(false);
       }
       await sdk?.connect();
-      checkNetwork();
+      // checkNetwork();
     } catch (error) {
       console.warn(`failed to connect..`, error);
       // NotificationManager.error(error.reason, "", 5000);
