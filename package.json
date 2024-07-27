@@ -33,7 +33,6 @@
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
     "styled-components": "^6.1.11",
-    "typescript": "^5.0.4",
     "viem": "^2.15.1",
     "wagmi": "^2.10.2",
     "web-vitals": "^2.1.4",
@@ -66,6 +65,7 @@
   },
   "devDependencies": {
     "@types/pdf-viewer-reactjs": "^2.2.5",
-    "typechain": "^8.3.2"
+    "typechain": "^8.3.2",
+    "typescript": "^5.5.4"
   }
 }

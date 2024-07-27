@@ -1,46 +1,35 @@
-# Getting Started with Create React App
+# Create Telegram Mini App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Step 1: Clone the project and deploy the project on the server.
 
-In the project directory, you can run:
+- Git clone from the repository or pull from dev_thomas branch
+- Deploy the proejct on the hosting server such as vercel or netlify by importing current github repository.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Step 2: Set up the Telegram App and get the token key.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Create Telegram app using @BotFather on the telegram.
+- Search the text as "@BotFather" or input text as "@BotFather" in any input filed on the telgram.
+- After getting it, click on search button and you will see the commands which is displayed by BotFather.
+- You can create new bot by click on Menu or input command as "/newbot"
+- Input the name for your telegram bot.
+- Input the username for your bot. Remember: It must end in `bot`. Like this, for example: TetrisBot or tetris_bot
+- After creating your telegram app, you will see the token key. It is under this text "Use this token to access the HTTP API:"
+- Copy and save the token key.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Step 3: Integrate deployed project to the telegram backend server
 
-### `npm run build`
+- You will see the backend server folder for your telegram miniapp in root direct as "server_telegram" once you clone the project or pull the update.
+- Create .env file by copy & paste the existed .env_example file and then input server's port number, your telegram's token key and the depolyed project url (on the vercel or others) into the .env file something like this format.
+```bash
+PORT =    // server port number
+BOT_TOKEN =     // this is just for your telegram token key
+URL_HOSTING_TELEGRM_APP =    // deployed project url on the vercel
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- You install node module by command as "npm install" and run the server with this command "npm run start". (or you can deploy the backend server on the hosting server as render or heroku.)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Step 4: You click your telegram mini app and then can enjoy with it.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
