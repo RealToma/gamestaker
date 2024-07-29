@@ -22,8 +22,7 @@ const SectionBetGroup = ({
       return NotificationManager.warning("Connect your wallet.", "", 3000);
     }
     try {
-      await ChainCode.initWallet();
-      await ChainCode.initContracts(ChainCode.signer);
+      await ChainCode.initContracts();
     } catch (error: any) {
       console.log("error of initContracts:", error);
       NotificationManager.error(error.reason, "", 5000);

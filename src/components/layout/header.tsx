@@ -114,10 +114,13 @@ const Header = () => {
       if (!connected) {
         return NotificationManager.warning("Connect your wallet.", "", 3000);
       }
-      await ChainCode.initWallet();
-      await ChainCode.initContracts(ChainCode.signer);
+      let [usdc, treasury, stakes] = await ChainCode.initContracts();
+      ChainCode.stakerContracts.forEach((value: any, key: any) => {
+        let contract : ethers.Contract = ChainCode.stakerContracts.get(key)!;
+        console.log("MyBETS: STAKER contracts [%s] = %s", key, contract.target);
+    });
+
       const resGetStakes = await PlaceBet.handleGetStakes(account);
-      console.log("resGetMyBets:", resGetStakes);
       if (resGetStakes.length === 0) {
         return NotificationManager.error(
           "You don't have any bets. Please place a bet.",
@@ -133,7 +136,7 @@ const Header = () => {
         let resDecodeBetId = ethers.decodeBytes32String(stake);
         let stakeInfo = ChainCode.getStakeInfo(resDecodeBetId);
         let contract: any = ChainCode.stakerContracts.get(resDecodeBetId);
-        console.log("contract[%s] is %s", resDecodeBetId, contract.target);
+        console.log("contract[%s]... is %s", resDecodeBetId, contract.target);
         let stakesByContract = await contract.getStakes(account);
         console.log(
           "for stake[%s] %s is game [%s : %s]",
@@ -157,19 +160,6 @@ const Header = () => {
           arrayMySubtitles.push(_stakeInfo);
         }
       }
-      /*
-      for (let i = 0; i < resGetStakes.length; i++) {
-        let resDecodeBetId = ethers.decodeBytes32String(resGetStakes[i]);
-        for (let j = 0; j < fakeApiResponse.length; j++) {
-          for (let k = 0; k < fakeApiResponse[j].GAMES.length; k++) {
-            let betName = fakeApiResponse[0].GAMES[k].name;
-            if (betName === resDecodeBetId) {
-              arrayMySubtitles.push(fakeApiResponse[0].GAMES[k]);
-            }
-          }
-        }
-      }
-*/
       console.log("arrayMySubtitles:", arrayMySubtitles);
       for (let i = 0; i < fakeApiResponse.length; i++) {
         const tempArrayMyBets: any = {

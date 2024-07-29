@@ -25,13 +25,18 @@ export type stakerContract = {
 };
 
 export class ChainCode {
+  public static INIT : any = false;
+  public static WALLET_CONNECTED = false;
+  public static chain : string;
+  public static accounts : any[] = [];
   public static signer: any;
-  public static stakerContracts: Map<string, ethers.Contract>;
+  public static stakerContracts: Map<string, ethers.Contract> = new Map<string, ethers.Contract>();
+
   public static usdcContract: any;
   public static stakeTreasuryContract: any;
   public static nfticket: any;
   public static web3provider: ethers.BrowserProvider;
-  public static stakes: string[];
+  public static stakes: string[] = [];
 
   static getStakeInfo(stake: any): any {
     let ret;
@@ -48,24 +53,36 @@ export class ChainCode {
     return ret;
   }
 
-  static async initWallet(): Promise<string[]> {
-    ChainCode.stakerContracts = new Map<string, ethers.Contract>();
+  static async initWallet(): Promise<any> {
     ChainCode.web3provider = new ethers.BrowserProvider(
       window?.ethereum as any
     );
-    let accounts: any;
-    if (window.ethereum) {
-      await window?.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      accounts = await window?.ethereum.request({
-        method: "eth_accounts",
-      });
+    try {
+      if (window.ethereum) {
+        await window?.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        let window_accounts : any = await window?.ethereum.request({
+          method: "eth_accounts",
+        });
+        ChainCode.accounts = ( (window_accounts === undefined) ? [] : window_accounts );
+        if (window_accounts === undefined) {
+           throw new Error("no eth_accounts found");
+        } else {
+          ChainCode.WALLET_CONNECTED = true;
+          // TODO we DO need to set ChainCode.signer to the signer (this is an ethers.js type)
+          ChainCode.signer = await ChainCode.web3provider.getSigner(ChainCode.accounts[0]);
+        }
+      } else {
+        throw new Error("no browser EOA wallet found");
+      }
+    } catch(error) {
+      if (error instanceof Error) {
+        alert(error.message);
+        return Promise.resolve("");
+      }
     }
-
-    // TODO Thomas - if you don't want to call initWallet() you DO need to set ChainCode.signer to the signer (this is an ethers.js type)
-    ChainCode.signer = await ChainCode.web3provider.getSigner(accounts[0]);
-    return Promise.resolve(accounts);
+    return Promise.resolve(ChainCode.signer);
   }
 
   /***
@@ -76,79 +93,73 @@ export class ChainCode {
    * @return stakerContract
    *
    ***/
-  static async initContracts(signer: any): Promise<[any, any, any]> {
-    let chain: string = "";
+  static async initContracts(): Promise<[any, any, any]> {
     let configData: any;
+    let signer : any;
 
-    try {
-      let chainIDBN: bigint = (await ChainCode.web3provider.getNetwork())
-        .chainId;
-      let chainID: number = Number(chainIDBN);
-      switch (chainID) {
-        case 80002:
-          chain = "amoy";
-          configData = configDataAmoy;
-
-          break;
-        case 137:
-          chain = "polygon";
-          configData = configDataPolygon;
-          break;
-        default:
-          throw new Error("invalid chainID `${chainID}`");
+    if (this.INIT == false) {
+      try {
+        signer = await ChainCode.initWallet();
+        let chainIDBN: bigint = (await ChainCode.web3provider.getNetwork()).chainId;
+        let chainID: number = Number(chainIDBN);
+        switch (chainID) {
+          case 80002:
+            ChainCode.chain = "amoy";
+            configData = configDataAmoy;
+            break;
+          case 137:
+            ChainCode.chain = "polygon";
+            configData = configDataPolygon;
+            break;
+          default:
+            throw new Error("invalid chainID `${chainID}`");
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(error.message);
+          Promise.resolve([]);
+        }
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-        Promise.resolve([]);
-      }
-    }
-    const usdcContractAddress = configData.myUSDC;
+      const usdcContractAddress = configData.myUSDC;
 
-    let availableStakes: stakerContract[] = configData.STAKER_ADDRESSES;
-    availableStakes.forEach(function (availableStake) {
-      console.log(
-        "processing stake %s with adress %s",
-        availableStake.name,
-        availableStake.address
+      let availableStakes: stakerContract[] = configData.STAKER_ADDRESSES;
+      let i = 0;
+      availableStakes.forEach(function (availableStake) {
+        ChainCode.stakes.push(availableStake.name);
+        ChainCode.stakerContracts.set(
+          ChainCode.stakes[i++],
+          new ethers.Contract(
+            availableStake.address,
+            availableStake.type === "MULTIPLE_CHOICE"
+              ? stakerMultiChoiceContractJson.abi
+              : stakerExactScoreContractJson.abi,
+            signer
+          )
+        );
+      }); // forEach()
+
+      ChainCode.stakerContracts.forEach((value: any, key: any) => {
+          let contract : ethers.Contract = value;
+          // console.log("STAKER contracts [%s] = %s", key, contract.target);
+      });
+      ChainCode.usdcContract = new ethers.Contract(
+        usdcContractAddress,
+        usdcContractJson.abi,
+        signer
       );
-      ChainCode.stakerContracts.set(
-        availableStake.name,
-        new ethers.Contract(
-          availableStake.address,
-          availableStake.type === "MULTIPLE_CHOICE"
-            ? stakerMultiChoiceContractJson.abi
-            : stakerExactScoreContractJson.abi,
-          signer
-        )
+
+      const addressStakeTreasury = configData.TREASURY_ADDRESS;
+      ChainCode.stakeTreasuryContract = new ethers.Contract(
+        addressStakeTreasury,
+        stakeTreasuryContractJson.abi,
+        signer
       );
-    }); // forEach()
-
-    ChainCode.usdcContract = new ethers.Contract(
-      usdcContractAddress,
-      usdcContractJson.abi,
-      signer
-    );
-    console.log(
-      "usdcContract address is %s",
-      await ChainCode.usdcContract.getAddress()
-    );
-
-    const addressStakeTreasury = configData.TREASURY_ADDRESS;
-    ChainCode.stakeTreasuryContract = new ethers.Contract(
-      addressStakeTreasury,
-      stakeTreasuryContractJson.abi,
-      signer
-    );
-
-    console.log(
-      "stakeTreasuryContract address is %s",
-      await ChainCode.stakeTreasuryContract.getAddress()
-    );
+    } 
     return Promise.resolve([
       ChainCode.usdcContract,
       ChainCode.stakeTreasuryContract,
-      availableStakes,
-    ]);
-  }
-}
+      ChainCode.stakerContracts,
+      ]
+    );
+  } // static async initContracts 
+} // class

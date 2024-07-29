@@ -33,7 +33,7 @@ const ButtonCashOut = ({ stakeID }: any) => {
     }
     try {
       await ChainCode.initWallet();
-      await ChainCode.initContracts(ChainCode.signer);
+      await ChainCode.initContracts();
       let userWallet = await ChainCode.signer.getAddress();
 
       // TODO: choose stake contract based on 'selectedGame', i.e. which game

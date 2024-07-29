@@ -358,6 +358,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
   };
 
   const getRatiosMultiChoice = async (stake: any) => {
+    await ChainCode.initContracts();
     let decimals = await ChainCode.usdcContract.decimals();
     try {
       let resRatios = await PlaceBet.handleGetRatios(stake);
@@ -385,6 +386,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
 
   const getRatiosScore = async (stake: any) => {
     try {
+      await ChainCode.initContracts();
       let resRatios = await PlaceBet.handleGetRatios(stake);
 
       let tempArray = [];

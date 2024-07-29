@@ -43,8 +43,7 @@ export default function CashOut() {
    */
   const handleCashOut = async () => {
     console.log(`Chosen Game: ${selectedGame}`);
-    await ChainCode.initWallet();
-    let [staker, usdc] = await ChainCode.initContracts(ChainCode.signer);
+    let [staker, usdc] = await ChainCode.initContracts();
     let userWallet = await ChainCode.signer.getAddress();
 
     // TODO: choose stake contract based on 'selectedGame', i.e. which game

@@ -57,8 +57,7 @@ export default function Oracle() {
       `Winning option Index: ${selectedOption} selected stake: ${selectedStake}`
     );
     // TODO initializing the chain objects should be done once per session
-    await ChainCode.initWallet();
-    let [staker, usdc] = await ChainCode.initContracts(ChainCode.signer);
+    let [staker, usdc] = await ChainCode.initContracts();
     await OracleClass.resolveBet(selectedStake, selectedOption);
     console.log(`winning Index: ${selectedOption}`);
 

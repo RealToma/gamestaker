@@ -21,6 +21,16 @@
 
 ## Step 3: Integrate deployed project to the telegram backend server
 
+### 1. Integrate deployed frontend url into our telegram bot.
+- Open telegram BotFather by input "@BotFather".
+- Choose the /mybots after clicking menu button or input "/mybots" and then click on your gamestaker bot.
+- You will see some options. Click on "Bot Settings".
+- Next, click on "Menu Button".
+- Next, click on "Configure menu button".
+- After that, input our frontend url which is deployed on the hosting server as vercel.
+
+
+### 2. Integrate the telegram bot into our backend server.  
 - You will see the backend server folder for your telegram miniapp in root direct as "server_telegram" once you clone the project or pull the update.
 - Create .env file by copy & paste the existed .env_example file and then input server's port number, your telegram's token key and the depolyed project url (on the vercel or others) into the .env file something like this format.
 ```bash
