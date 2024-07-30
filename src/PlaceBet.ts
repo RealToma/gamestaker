@@ -1,4 +1,4 @@
-import { parseUnits } from "ethers";
+import { ethers, parseUnits } from "ethers";
 import { ChainCode } from "./web3/chainCode";
 
 export class PlaceBet {
@@ -47,14 +47,12 @@ export class PlaceBet {
   static handleAddingBet = async (
     selectedStake: any,
     selectedOption: any,
-    betAmount: any,
-    bettingTokenType: any
+    betAmount: any
   ) => {
     let decimals = await ChainCode.usdcContract.decimals();
     let stake = parseUnits(betAmount, Number(decimals));
     console.log(`Betting option Index: ${selectedOption}`);
     console.log(`Betting amount: ${stake}`);
-    console.log(`Token Type: ${bettingTokenType}`);
 
     const myUSDC = await ChainCode.usdcContract.getAddress();
 
@@ -81,7 +79,6 @@ export class PlaceBet {
       );
       tx = await contract.create_stake(selectedOption, myUSDC, stake);
       await tx.wait();
-      // @dev can return before resolved : await tx.wait();
     }
     // TODO events
 
@@ -133,19 +130,30 @@ export class PlaceBet {
   };
 
   static handleGetRatio = async (selectedStake: any, score: any) => {
-    let contract = ChainCode.stakerContracts.get(selectedStake);
+    await ChainCode.initContracts();
+    let _contract = ChainCode.stakerContracts.get(selectedStake);
+    let contract = (_contract === undefined) ? "" : _contract;
 
     if (!(contract === undefined)) {
-      let resRatio = await contract.getRatio(score);
+      console.log("handleGetRatio: working with contract at %s to get ratio for score=%s",
+        (contract as ethers.Contract).target,
+        score
+      );
+      let resRatio = await (contract as ethers.Contract).getRatio(score);
       console.log("resRatio:", resRatio);
       return resRatio;
     }
   };
 
   static handleGetRatios = async (selectedStake: any) => {
-    let contract = ChainCode.stakerContracts.get(selectedStake);
+    await ChainCode.initContracts();
+    let _contract = ChainCode.stakerContracts.get(selectedStake);
+    let contract = (_contract === undefined) ? "" : _contract;
+    console.log("handleGetRatios: working with contract at %s",
+     (contract as ethers.Contract).target
+    );
     if (!(contract === undefined)) {
-      let resRatio = await contract.getRatios();
+      let resRatio = await (contract as ethers.Contract).getRatios();
       return resRatio;
     }
   };

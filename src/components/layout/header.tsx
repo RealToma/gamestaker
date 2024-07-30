@@ -25,7 +25,7 @@ const Header = () => {
       // checkNetwork();
     } catch (error) {
       console.warn(`failed to connect..`, error);
-      // NotificationManager.error(error.reason, "", 5000);
+      NotificationManager.error((error as Error).message, "", 5000);
     }
   };
 

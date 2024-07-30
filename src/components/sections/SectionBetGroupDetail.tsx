@@ -2,6 +2,9 @@ import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 import { NotificationManager } from "react-notifications";
 import styled from "styled-components";
+
+
+import { ethers } from "ethers";
 import { PlaceBet } from "../../PlaceBet";
 import { useAccount } from "wagmi";
 import { formatUnits } from "viem";
@@ -43,43 +46,53 @@ const SectionBetGroupDetail = ({ data }: any) => {
     //   return;
     // }
     setBetAmount(value);
-    let score = parseInt(betScore1) * 10 + parseInt(betScore2);
+    let stakeInfo = ChainCode.getStakeInfo(stake);
+    if (stakeInfo.type == "MULTIPLE_CHOICE") {
+      await calculateOdds(stake, value);
+    } else {
+      let score = parseInt(betScore1) * 10 + parseInt(betScore2);
+      console.log(
+        "handleBetAmountChange betScore1=%s betScore2=%s score = %s",
+        betScore1,
+        betScore2,
+        score
+      );
+      let decimals: number = Number(await ChainCode.usdcContract.decimals());
 
-    let decimals: number = Number(await ChainCode.usdcContract.decimals());
+      try {
+        let resRatio = await PlaceBet.handleGetRatio(stake, score);
+        const totalVolume = parseInt(formatUnits(resRatio[0], Number(decimals)));
+        console.log("totalVolume:", totalVolume);
+        const scoreVolume = parseInt(formatUnits(resRatio[1], Number(decimals)));
+        console.log("handleBetAmountChange scoreVolume:", scoreVolume);
 
-    try {
-      let resRatio = await PlaceBet.handleGetRatio(stake, score);
-      const totalVolume = parseInt(formatUnits(resRatio[0], Number(decimals)));
-      console.log("totalVolume:", totalVolume);
-      const scoreVolume = parseInt(formatUnits(resRatio[1], Number(decimals)));
-      console.log("handleBetAmountChange scoreVolume:", scoreVolume);
-
-      console.log("betAmount:", parseFloat(value));
-      if (value === undefined || value === null || value === "") {
-        let temp = totalVolume / scoreVolume;
-        console.log("temp:", temp);
-        if (temp !== temp || temp === Infinity) {
-          return setRatio(1);
+        console.log("betAmount:", parseFloat(value));
+        if (value === undefined || value === null || value === "") {
+          let temp = totalVolume / scoreVolume;
+          console.log("temp:", temp);
+          if (temp !== temp || temp === Infinity) {
+            return setRatio(1);
+          }
         }
-      }
 
-      if (betAmount === undefined || betAmount === null || betAmount === "") {
-        return setRatio(1);
-      } else {
-        if (scoreVolume === 0 && value == 0) {
+        if (betAmount === undefined || betAmount === null || betAmount === "") {
           return setRatio(1);
         } else {
-          setRatio(totalVolume / parseFloat(value));
+          if (scoreVolume === 0 && value == 0) {
+            return setRatio(1);
+          } else {
+            setRatio(totalVolume / parseFloat(value));
+          }
+          if (totalVolume / parseFloat(value) === Infinity) {
+            return setRatio(1);
+          }
         }
-        if (totalVolume / parseFloat(value) === Infinity) {
-          return setRatio(1);
-        }
-      }
 
-      setRatio(calculateRatio(totalVolume, scoreVolume, parseFloat(value)));
-    } catch (error) {
-      console.log("error of getRatio:", error);
-    }
+        setRatio(calculateRatio(totalVolume, scoreVolume, parseFloat(value)));
+      } catch (error) {
+        console.log("error of getRatio:", error);
+      }
+    } // else MULTIPLE_CHOICE
   };
 
   const handleBetScore1Change = async (value: any, stake: any) => {
@@ -203,6 +216,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
   const handleAddingBet = async (stake: any, type: any) => {
     setSelectedStake(stake);
     try {
+      await ChainCode.initContracts();
       if (type === "MULTIPLE_CHOICE") {
         if (typeMultiChoice === -1) {
           NotificationManager.warning("Please select an option.", "", 3000);
@@ -240,8 +254,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
         await PlaceBet.handleAddingBet(
           selectedStake,
           typeMultiChoice,
-          betAmount,
-          "USDC" // bettingTokenType
+          betAmount
         );
 
         let resRatios = await PlaceBet.handleGetRatios(stake);
@@ -322,58 +335,107 @@ const SectionBetGroupDetail = ({ data }: any) => {
     return (totalVolume + inputAmount) / (scoreVolume + inputAmount);
   };
 
-  const calculateOdds = (options: any[], volume: any, betAmount: any) => {
-    // winner_rate = (amount_1 + amount_2)*(1-fee)/amount_3
-    // let tempAmount: any;
-    // if (amount === null || amount === undefined || amount === "") {
-    //   return 1.0;
-    // } else {
-    //   tempAmount = parseFloat(amount);
-    // }
-
-    // const fee = parseFloat(process.env.REACT_APP_FEE || "0");
-    // if (parseFloat(volume) <= 0) {
-    //   return 0;
-    // }
+  const calculateOdds = async (stake : string, betAmount: any) => {
     let amount;
+    let scoreVolume : any;
+
     if (betAmount === undefined || betAmount === null || betAmount === "") {
       amount = 0;
     } else {
       amount = parseFloat(betAmount);
     }
-    if (volume === 0 && amount === 0) {
-      return 1;
+
+    let _decimals = await ChainCode.usdcContract.decimals();
+    let decimals : number = Number(_decimals);
+    try {
+      let resRatios : any[] = await PlaceBet.handleGetRatios(stake);
+      let _win : number = Number(formatUnits(resRatios[1], decimals));
+      let _tie : number = Number(formatUnits(resRatios[3], decimals));
+      let _lose : number = Number(formatUnits(resRatios[5], decimals));
+      console.log(
+        "resRatio = [%s, %s, %s]", 
+        _win,
+        _tie,
+        _lose 
+      );
+
+      const tempRatios: any[] = [
+        {
+          id: "win",
+          rate: _win,
+        },
+        {
+          id: "tie",
+          rate: _tie,
+        },
+        {
+          id: "lose",
+          rate: _lose,
+        },
+      ];
+
+      const totalAmount = tempRatios.reduce((acc, option) => {
+        acc = acc + option.rate;
+        console.log("optioin.rate[option.%s] is %s", option.id, option.rate);
+        return(acc);
+      }, 0);
+      let totalVolume : number = 0;
+      for ( let i = 0; i < resRatios.length; i+=2) {
+        totalVolume = totalAmount + Number(amount);
+        let _r = formatUnits(resRatios[i+1], decimals);
+        console.log("_r = %d", _r);
+        console.log("TypeMultiChoice is %s", typeMultiChoice);
+        if (Math.floor(i/2) == typeMultiChoice) {
+          scoreVolume = formatUnits(resRatios[i+1], decimals);
+          console.log(
+            "we are calculating scoreVolume=%s for option[%s]",
+            Number(scoreVolume),
+            tempRatios[Math.floor(i/2)].id
+          );
+          tempRatios[Math.floor(i/2)].rate = totalVolume / (Number(_r) + Number(amount));
+        } else {
+          tempRatios[Math.floor(i/2)].rate = totalVolume / (Number(_r) + Number(amount));
+        }
+          console.log(
+            "totalAmount is %s, totalVolume %s winnerOdds=%s", 
+            totalAmount, 
+            totalVolume, 
+            tempRatios[Math.floor(i/2)].rate
+          );
+      } // for
+
+      console.log("calculateOdds: ratios are:", JSON.stringify(tempRatios));
+      console.log("calculateOdds scoreVolume: %s totalVolume %s",Number(scoreVolume),  totalVolume);
+      for (let i = 0; i < tempRatios.length; i++) {
+        console.log("tempRatios[%s] = %s", tempRatios[i].id, tempRatios[i].rate );
+      }
+      setRatiosMultiChoice(tempRatios);
+      for (let i = 0; i < ratios.length; i++) {
+        console.log("getRatios[%s] = %s", ratios[i].id, ratios[i].rate);
+      }
+    } catch (error) {
+      console.log("error of getRatio:", error);
     }
-    const totalAmount = options.reduce((acc, option) => acc + option.rate, 0);
-    const totalVolume = totalAmount + amount;
-    const winnerOdds = totalVolume / (volume + amount);
-    console.log(`${data.name}-winnerOdds:`, winnerOdds);
-    if (winnerOdds === Infinity) {
-      return 0;
-    }
-    if (winnerOdds !== winnerOdds) {
-      return 0;
-    }
-    return winnerOdds;
   };
 
   const getRatiosMultiChoice = async (stake: any) => {
     await ChainCode.initContracts();
-    let decimals = await ChainCode.usdcContract.decimals();
+    let _decimals = await ChainCode.usdcContract.decimals();
+    let decimals : number = Number(_decimals);
     try {
       let resRatios = await PlaceBet.handleGetRatios(stake);
       let tempRatios: any = [
         {
           id: "win",
-          rate: parseInt(formatUnits(resRatios[1], Number(decimals))),
+          rate: parseInt(formatUnits(resRatios[1], decimals)),
         },
         {
           id: "tie",
-          rate: parseInt(formatUnits(resRatios[3], Number(decimals))),
+          rate: parseInt(formatUnits(resRatios[3], decimals)),
         },
         {
           id: "lose",
-          rate: parseInt(formatUnits(resRatios[5], Number(decimals))),
+          rate: parseInt(formatUnits(resRatios[5], decimals)),
         },
       ];
 
@@ -408,11 +470,14 @@ const SectionBetGroupDetail = ({ data }: any) => {
   };
 
   useEffect(() => {
-    if (ChainCode.stakerContracts) {
+    if (ChainCode.INIT) {
+      console.log("useEffect");
       if (data?.name !== null || data?.name !== undefined) {
         if (data?.type === "MULTIPLE_CHOICE") {
+          console.log(" getRatiosMultiChoice");
           getRatiosMultiChoice(data?.name);
         } else {
+          console.log(" getRatiosScore");
           getRatiosScore(data?.name);
         }
       }
@@ -455,11 +520,11 @@ const SectionBetGroupDetail = ({ data }: any) => {
                     className={`w-100 text-center ${
                       typeMultiChoice === 0 ? "bg-warning" : "bg-secondary"
                     } border-secondary border-[12px] mt-1`}
-                  >
-                    {ratios &&
-                      calculateOdds(ratios, ratios[0]?.rate, betAmount).toFixed(
-                        2
-                      )}
+                    >
+                    {
+                      ratios &&
+                      (ratios[0]?.rate).toFixed(2)
+                    }
                   </div>
                 </SectionEachOptionGroup>
                 <SectionEachOptionGroup>
@@ -484,10 +549,10 @@ const SectionBetGroupDetail = ({ data }: any) => {
                       typeMultiChoice === 1 ? "bg-warning" : "bg-secondary"
                     } border-secondary border-[12px] mt-1`}
                   >
-                    {ratios &&
-                      calculateOdds(ratios, ratios[1].rate, betAmount).toFixed(
-                        2
-                      )}
+                    {
+                      ratios &&
+                      (ratios[1]?.rate).toFixed(2)
+                    }
                   </div>
                 </SectionEachOptionGroup>
                 <SectionEachOptionGroup>
@@ -512,16 +577,16 @@ const SectionBetGroupDetail = ({ data }: any) => {
                       typeMultiChoice === 2 ? "bg-warning" : "bg-secondary"
                     } border-secondary border-[12px] mt-1`}
                   >
-                    {ratios &&
-                      calculateOdds(ratios, ratios[2].rate, betAmount).toFixed(
-                        2
-                      )}
+                    {
+                      ratios &&
+                      (ratios[2]?.rate).toFixed(2)
+                    }
                   </div>
                 </SectionEachOptionGroup>
               </SectionBetEachOption>
             ) : data?.type === "SCORER" ? (
               <SectionEachScorer>
-                <SecitionInputScorer>
+                <SectionInputScorer>
                   <InputBetValue
                     component="input"
                     placeholder={data?.Parties[0]}
@@ -530,9 +595,9 @@ const SectionBetGroupDetail = ({ data }: any) => {
                       handleBetScore1Change(e.target.value, data?.name);
                     }}
                   />
-                </SecitionInputScorer>
+                </SectionInputScorer>
                 &nbsp;:&nbsp;
-                <SecitionInputScorer>
+                <SectionInputScorer>
                   <InputBetValue
                     component="input"
                     placeholder={data?.Parties[1]}
@@ -541,7 +606,7 @@ const SectionBetGroupDetail = ({ data }: any) => {
                       handleBetScore2Change(e.target.value, data?.name);
                     }}
                   />
-                </SecitionInputScorer>
+                </SectionInputScorer>
                 <SectionScoreRatio>{ratio.toFixed(2)}</SectionScoreRatio>
               </SectionEachScorer>
             ) : (
@@ -791,7 +856,7 @@ const SectionScoreRatio = styled(Box)`
   }
 `;
 
-const SecitionInputScorer = styled(Box)`
+const SectionInputScorer = styled(Box)`
   display: flex;
   flex: 1;
   width: 100%;
