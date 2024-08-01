@@ -9,7 +9,8 @@ const Layout = ({ children }: any) => {
       <Header />
       <Content>
         <BackVideo>
-          <video
+          <img src="/assets/images/background/temp01.png" width="100%" alt="" />
+          {/* <video
             autoPlay
             loop
             muted
@@ -17,7 +18,7 @@ const Layout = ({ children }: any) => {
             preload="auto"
           >
             <source src="/assets/videos/stadium.mp4" type="video/mp4" />
-          </video>
+          </video> */}
         </BackVideo>
         <InsideContent>{children}</InsideContent>
       </Content>
