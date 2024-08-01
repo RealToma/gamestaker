@@ -9,7 +9,7 @@ const Layout = ({ children }: any) => {
       <Header />
       <Content>
         <BackVideo>
-          <img src="/assets/images/background/temp01.png" width="100%" alt="" />
+          <img src="/assets/images/background/temp01.png" width="100%" height={"100%"} alt="" />
           {/* <video
             autoPlay
             loop
@@ -53,12 +53,19 @@ const Content = styled(Box)`
 const BackVideo = styled(Box)`
   /* display: flex; */
   position: fixed;
-  top: 0;
-  left: 0;
-  /* left: 50%;
+  /* top: 0;
+  left: 0; */
+  left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); */
+  transform: translate(-50%, -50%);
   filter: blur(2px);
+  > img {
+    width: 100vw;
+    height: 100vh;
+    object-position: center;
+    /* object-fit: cover; */
+  }
+
   > video {
     width: 100vw;
     height: 100vh;
